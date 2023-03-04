@@ -1,0 +1,28 @@
+{
+  "name": "wayce",
+  "version": "1.0.0",
+  "description": "Wayce - way trace for not wayceting your time",
+  "main": "main.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ./dist/main.js",
+    "watch": "(tsc --watch &) && nodemon ./dist/main.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/erotourtes/wayce.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/erotourtes/wayce/issues"
+  },
+  "homepage": "https://github.com/erotourtes/wayce#readme",
+  "devDependencies": {
+    "@types/node": "^18.14.6",
+    "nodemon": "^2.0.21",
+    "typescript": "^4.9.5"
+  }
+}
