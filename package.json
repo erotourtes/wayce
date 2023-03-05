@@ -22,6 +22,9 @@
   "homepage": "https://github.com/erotourtes/wayce#readme",
   "devDependencies": {
     "@types/node": "^18.14.6",
+    "@typescript-eslint/eslint-plugin": "^5.54.0",
+    "@typescript-eslint/parser": "^5.54.0",
+    "eslint": "^8.35.0",
     "nodemon": "^2.0.21",
     "typescript": "^4.9.5"
   }
