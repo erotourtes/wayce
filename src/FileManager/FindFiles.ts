@@ -3,11 +3,12 @@ import path from "node:path";
 
 export default class FindFiles {
   private stack: string[] = [];
-  private forbidenFolders: string[] = [".git", "node_modules"];
+  private forbidenFolders: string[] = ["node_modules"];
   private foundFiles: string[] = [];
   private visited: Set<string> = new Set();
+  private extensions: string[] = [];
 
-  constructor(private extensions: string[]) {}
+  private constructor() {}
 
   async find(rootPath: string) {
     this.stack.push(rootPath);
@@ -19,6 +20,27 @@ export default class FindFiles {
 
     return this.foundFiles;
   }
+
+  private static Builder = class {
+    findFiles: FindFiles;
+    constructor() {
+      this.findFiles = new FindFiles();
+    }
+
+    addExtensions(...ext: string[]) {
+      this.findFiles.extensions.push(...ext);
+      return this;
+    }
+
+    addForbidenFolders(...folder: string[]) {
+      this.findFiles.forbidenFolders.push(...folder);
+      return this;
+    }
+
+    build() {
+      return this.findFiles;
+    }
+  };
 
   private async checkDir(rootPath: string) {
     const files = await fs.promises.readdir(rootPath, {
@@ -47,6 +69,10 @@ export default class FindFiles {
     return (
       file.isFile() && this.extensions.some((ext) => file.name.endsWith(ext))
     );
+  }
+
+  static get builder() {
+    return new FindFiles.Builder();
   }
 
   get found() {

@@ -3,7 +3,10 @@ import FindFiles from "./FileManager/FindFiles.js";
 
 const START_PATH = `${os.homedir()}`;
 
-const findFiles = new FindFiles(["txt"]);
-const files = await findFiles.find(START_PATH);
+const files = await FindFiles.builder
+  .addExtensions("pdf")
+  .addForbidenFolders("node_modules")
+  .build()
+  .find(START_PATH);
 
 console.log(files);
