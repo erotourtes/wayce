@@ -3,7 +3,9 @@ import path from "node:path";
 
 export default class FindFiles {
   private stack: string[] = [];
+  private forbidenFolders: string[] = [".git", "node_modules"];
   private foundFiles: string[] = [];
+  private visited: Set<string> = new Set();
 
   constructor(private extensions: string[]) {}
 
@@ -11,7 +13,7 @@ export default class FindFiles {
     this.stack.push(rootPath);
 
     while (this.stack.length) {
-      const rootPath = this.stack.pop()!;
+      const rootPath = this.stack.pop() as string;
       await this.checkDir(rootPath);
     }
 
@@ -24,22 +26,30 @@ export default class FindFiles {
     });
 
     for (const file of files) {
-      if (this.isRigthFolder(file))
-        this.stack.push(path.join(rootPath, file.name));
+      const fullPath = path.join(rootPath, file.name);
 
-      if (this.isRightFile(file))
-        this.foundFiles.push(path.join(rootPath, file.name));
+      if (this.visited.has(fullPath)) continue;
+      this.visited.add(fullPath);
+
+      if (this.isRigthFolder(file)) this.stack.push(fullPath);
+
+      if (this.isRightFile(file)) this.foundFiles.push(fullPath);
     }
   }
 
   private isRigthFolder(file: fs.Dirent): boolean {
     const isDotFolder = file.name.startsWith(".");
-    return file.isDirectory() && !isDotFolder;
+    const isForbidenFolder = this.forbidenFolders.includes(file.name);
+    return file.isDirectory() && !isDotFolder && !isForbidenFolder;
   }
 
   private isRightFile(file: fs.Dirent) {
     return (
       file.isFile() && this.extensions.some((ext) => file.name.endsWith(ext))
     );
+  }
+
+  get found() {
+    return this.foundFiles;
   }
 }
