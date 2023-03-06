@@ -171,3 +171,7 @@ rules:
   template-curly-spacing:
   - error
   - never
+  "@typescript-eslint/no-empty-function":
+  - warn
+  - allow:
+    - constructors
