@@ -21,27 +21,6 @@ export default class FindFiles {
     return this.foundFiles;
   }
 
-  private static Builder = class {
-    findFiles: FindFiles;
-    constructor() {
-      this.findFiles = new FindFiles();
-    }
-
-    addExtensions(...ext: string[]) {
-      this.findFiles.extensions.push(...ext);
-      return this;
-    }
-
-    addForbidenFolders(...folder: string[]) {
-      this.findFiles.forbidenFolders.push(...folder);
-      return this;
-    }
-
-    build() {
-      return this.findFiles;
-    }
-  };
-
   private async checkDir(rootPath: string) {
     const files = await fs.promises.readdir(rootPath, {
       withFileTypes: true,
@@ -78,4 +57,26 @@ export default class FindFiles {
   get found() {
     return this.foundFiles;
   }
+
+  private static Builder = class {
+    findFiles: FindFiles;
+    constructor() {
+      this.findFiles = new FindFiles();
+    }
+
+    addExtensions(...ext: string[]) {
+      this.findFiles.extensions.push(...ext);
+      return this;
+    }
+
+    addForbidenFolders(...folder: string[]) {
+      this.findFiles.forbidenFolders.push(...folder);
+      return this;
+    }
+
+    build() {
+      return this.findFiles;
+    }
+  };
+
 }

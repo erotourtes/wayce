@@ -6,7 +6,7 @@ import logger from "../Utils/logger.js";
 const START_PATH = `${os.homedir()}`;
 const TMP_PATH = `${os.tmpdir()}/wayce.txt`;
 
-export default async function getPathes() {
+export async function getPathes() {
   const isExists = fs.existsSync(TMP_PATH);
 
   if (isExists) {
@@ -18,7 +18,7 @@ export default async function getPathes() {
   }
 
   logger("Searching files");
-  const finder = FindFiles.builder.addExtensions("pdf").build();
+  const finder = FindFiles.builder.addExtensions("txt").build();
 
   const pathes = await finder.find(START_PATH);
 
@@ -26,4 +26,13 @@ export default async function getPathes() {
   fs.writeFileSync(TMP_PATH, pathes.join(os.EOL));
 
   return pathes;
+}
+
+export function clearCache() {
+  const isExists = fs.existsSync(TMP_PATH);
+
+  if (isExists) {
+    logger("Removing cache");
+    fs.rmSync(TMP_PATH);
+  }
 }
