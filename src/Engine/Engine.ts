@@ -23,8 +23,11 @@ export default class Engine {
 
   private async indexFile(file: fs.PathLike): Promise<void> {
     const size = fs.statSync(file).size;
-    if (size > 10 ** 7) return Promise.resolve();
+    if (size > parseInt(process.env.MAX_FILE_SIZE as string))
+      return Promise.resolve();
 
+    /*TODO: use readStream for large files
+      if you want to remove the MAX_FILE_SIZE env variable*/
     const filePromise = fs.promises.readFile(file, "utf-8");
 
     if (!this.tokens.has(file)) {
