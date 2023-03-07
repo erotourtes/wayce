@@ -1,6 +1,5 @@
 export default function logger(message: string | string[] | Error) {
   if (message instanceof Error) {
-
     console.error(message);
     return;
   }

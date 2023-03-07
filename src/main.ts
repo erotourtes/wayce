@@ -14,10 +14,8 @@ import "./config.js";
 //
 // console.log(engine.tokens);
 
-import Engine from "./Engine/Engine.js";
+import EngineFactory from "./Engine/EngineFactory.js";
 
-const engine = new Engine();
+const engine = EngineFactory.defaultEngine;
 
 await engine.index([`${process.cwd()}/src/Engine/test.txt`]);
-
-console.log(engine.tokens);

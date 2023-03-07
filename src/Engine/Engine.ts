@@ -1,10 +1,11 @@
 import fs from "node:fs";
 import logger from "../Utils/logger.js";
+import * as T from "../Utils/types.js";
 
 export default class Engine {
-  tokens: Map<string, number> = new Map();
+  private tokens: Map<string, number> = new Map();
 
-  constructor() {}
+  constructor(private Tokenizer: T.Tokenizable) {}
 
   async index(files: fs.PathLike[]) {
     await this.indexFiles(files);
@@ -21,7 +22,7 @@ export default class Engine {
 
     return filePromise
       .then((content) => {
-        const iter = new this.TokenIterator(content);
+        const iter = this.Tokenizer.getIterator(content);
 
         for (const token of iter) {
           console.log("token is", token);
@@ -31,63 +32,4 @@ export default class Engine {
         logger(err);
       });
   }
-
-  private TokenIterator = class implements Iterator<string> {
-    private fileChars: string[];
-    constructor(text: string) {
-      this.fileChars = text.split("");
-    }
-
-    [Symbol.iterator](): Iterator<string> {
-      return this;
-    }
-
-    next(): IteratorResult<string> {
-      const index = this.indexOfNextToken();
-
-      const token = this.fileChars.slice(0, index).join("");
-      this.fileChars = this.fileChars.slice(index);
-
-      return {
-        done: this.fileChars.length === 0,
-        value: token,
-      };
-    }
-
-    private indexOfNextToken(): number {
-      this.trim();
-
-      let index = 0;
-      while (this.fileChars.length > 0) {
-        // TODO - linked list instead of array;
-        const ch = this.fileChars[index]?.toLowerCase() as string;
-        if (this.isLetter(ch)) index++;
-        else break;
-      }
-
-      return index;
-    }
-
-    private trim(): void {
-      while (this.fileChars.length > 0 && !this.isNeeded(this.fileChars[0])) {
-        this.fileChars.shift();
-      }
-    }
-
-    private isLetter(ch: string): boolean {
-      ch = ch.toLowerCase();
-      return (
-        "a".charCodeAt(0) <= ch.charCodeAt(0) &&
-        ch.charCodeAt(0) <= "z".charCodeAt(0)
-      );
-    }
-
-    private isDigit(ch: string): boolean {
-      return !Number.isNaN(parseFloat(ch));
-    }
-
-    private isNeeded(ch: string): boolean {
-      return this.isLetter(ch) || this.isDigit(ch);
-    }
-  };
 }
