@@ -16,8 +16,8 @@ export default class Tokenizer implements IterableIterator<string> {
     this.fileChars = this.fileChars.slice(index);
 
     return {
-      done: this.fileChars.length === 0,
-      value: token,
+      done: this.fileChars.length <= 0,
+      value: token?.toLowerCase(),
     };
   }
 
@@ -51,6 +51,8 @@ export default class Tokenizer implements IterableIterator<string> {
   }
 
   private isLetter(ch: string): boolean {
+    if (ch === undefined) return false;
+
     ch = ch.toLowerCase();
     return (
       "a".charCodeAt(0) <= ch.charCodeAt(0) &&

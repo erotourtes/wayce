@@ -3,12 +3,16 @@ import logger from "../Utils/logger.js";
 import * as T from "../Utils/types.js";
 
 export default class Engine {
-  private tokens: Map<string, number> = new Map();
+  private tokens: Map<fs.PathLike, Map<string, number>> = new Map();
 
   constructor(private Tokenizer: T.Tokenizable) {}
 
   async index(files: fs.PathLike[]) {
     await this.indexFiles(files);
+  }
+
+  print() {
+    console.log(this.tokens);
   }
 
   private async indexFiles(files: fs.PathLike[]): Promise<void> {
@@ -18,14 +22,23 @@ export default class Engine {
   }
 
   private async indexFile(file: fs.PathLike): Promise<void> {
+    const size = fs.statSync(file).size;
+    if (size > 10 ** 7) return Promise.resolve();
+
     const filePromise = fs.promises.readFile(file, "utf-8");
+
+    if (!this.tokens.has(file)) {
+      this.tokens.set(file, new Map());
+    }
+
+    const tokens = this.tokens.get(file)!;
 
     return filePromise
       .then((content) => {
         const iter = this.Tokenizer.getIterator(content);
 
         for (const token of iter) {
-          console.log("token is", token);
+          tokens.set(token, (tokens.get(token) || 0) + 1);
         }
       })
       .catch((err) => {

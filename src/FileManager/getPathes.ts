@@ -8,6 +8,7 @@ export async function getPathes(extensions: string[]) {
 
   const isSame = parser.isSame(extensions);
   if (isSame) {
+    logger("Reading from cache");
     return parser.pathes();
   }
 
@@ -18,7 +19,7 @@ export async function getPathes(extensions: string[]) {
 
   logger("Writing to cache");
   fs.writeFileSync(
-    process.env.TMP_PATH as string,
+    process.env.PATHES_CACHE as string,
     CacheParser.format(extensions, pathes)
   );
 
@@ -26,7 +27,7 @@ export async function getPathes(extensions: string[]) {
 }
 
 export function clearCache() {
-  const TMP_PATH = process.env.TMP_PATH as string;
+  const TMP_PATH = process.env.PATHES_CACHE as string;
   const isExists = fs.existsSync(TMP_PATH);
 
   if (isExists) {

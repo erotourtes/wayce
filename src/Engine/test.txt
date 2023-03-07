@@ -1,6 +1,19 @@
 max1234
 1
 
+https://images.dog.ceo/breeds/labrador/n02099712_6644.jpg
+
+duplicate duplicate
 {some ``cool`` code}
 
-done
+duplicate
+
+done 😄.
+
+User-agent: *
+{{- if hugo.IsProduction | or (eq site.Params.env "production") }}
+Disallow:
+{{- else }}
+Disallow: /
+{{- end }}
+Sitemap: {{ "sitemap.xml" | absURL }}

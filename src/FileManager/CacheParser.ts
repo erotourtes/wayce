@@ -13,7 +13,7 @@ export default class CacheParser {
   }
 
   isSame(extensions: string[]) {
-    const isExists = fs.existsSync(process.env.TMP_PATH as string);
+    const isExists = fs.existsSync(process.env.PATHES_CACHE as string);
     if (!isExists) return false;
 
     this.readIfEmpty();
@@ -35,7 +35,7 @@ export default class CacheParser {
   private readContent() {
     logger("Reading cache");
     try {
-      const TMP_PATH = process.env.TMP_PATH as string;
+      const TMP_PATH = process.env.PATHES_CACHE as string;
 
       const [line, ...content] = fs
         .readFileSync(TMP_PATH, "utf-8")
