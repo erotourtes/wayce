@@ -1,9 +1,15 @@
 import "./config.js";
 
-import { getPathes, clearCache } from "./FileManager/getPathes.js";
+import { getPathes } from "./FileManager/getPathes.js";
 import logger from "./Utils/logger.js";
+import Engine from "./Engine/Engine.js";
 
-clearCache();
 const files = await getPathes(["txt"]);
 
 logger(files);
+
+const engine = new Engine();
+
+await engine.index(files);
+
+console.log(engine.tokens);
