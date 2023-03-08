@@ -7,15 +7,11 @@ export default class Lexer {
 
   constructor(private Tokenizer: T.Tokenizable) {}
 
-  async index(files: fs.PathLike[]) {
-    await this.indexFiles(files);
-  }
-
   print() {
     console.log(this.tokens);
   }
 
-  private async indexFiles(files: fs.PathLike[]): Promise<void> {
+  async index(files: fs.PathLike[]): Promise<void> {
     logger("indexing");
 
     const cache = this.loadIfExists();
