@@ -2,7 +2,7 @@ import fs from "node:fs";
 import logger from "../Utils/logger.js";
 import * as T from "../Utils/types.js";
 
-export default class Engine {
+export default class Lexer {
   private tokens: Map<fs.PathLike, Map<string, number>> = new Map();
 
   constructor(private Tokenizer: T.Tokenizable) {}

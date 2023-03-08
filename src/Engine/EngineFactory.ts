@@ -1,4 +1,4 @@
-import Engine from "./Engine.js";
+import Lexer from "./Lexer.js";
 import Tokenizer from "./Tokenizer.js";
 import * as T from "../Utils/types.js";
 
@@ -10,7 +10,7 @@ export default class EngineFactory {
       },
     };
 
-    const engine = new Engine(tokenizer);
+    const engine = new Lexer(tokenizer);
 
     return engine;
   }
