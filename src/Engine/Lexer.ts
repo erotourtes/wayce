@@ -5,7 +5,10 @@ import * as T from "../Utils/types.js";
 export default class Lexer {
   private tokens: Map<fs.PathLike, Map<string, number>> = new Map();
 
-  constructor(private Tokenizer: T.Tokenizable) {}
+  constructor(
+    private Tokenizer: T.Tokenizable,
+    private cacheManager: T.CacheManager
+  ) {}
 
   print() {
     console.log(this.tokens);
@@ -14,7 +17,7 @@ export default class Lexer {
   async index(files: fs.PathLike[]): Promise<void> {
     logger("indexing");
 
-    const cache = this.loadIfExists();
+    const cache = await this.cacheManager.getCache();
     if (cache?.size === files.length) {
       logger("Engine's Cache found");
       this.tokens = cache;
@@ -46,40 +49,5 @@ export default class Lexer {
       .catch((err) => {
         logger(err);
       });
-  }
-
-  save() {
-    logger("saving engine cache");
-    fs.writeFileSync(
-      process.env.ENGINE_CACHE as string,
-      JSON.stringify(this.parseTokensToArray())
-    );
-  }
-
-  private parseTokensToArray() {
-    const arr = [];
-
-    for (const [key, value] of this.tokens) {
-      logger(`parsing -> ${key}`);
-      arr.push([key, [...value]]);
-    }
-
-    return arr;
-  }
-
-  loadIfExists() {
-    if (!fs.existsSync(process.env.ENGINE_CACHE as string)) return null;
-
-    const cache = fs.readFileSync(process.env.ENGINE_CACHE as string, "utf-8");
-    return this.parseTokensFromArr(JSON.parse(cache));
-  }
-
-  private parseTokensFromArr(arr: [fs.PathLike, [string, number][]][]) {
-    const tokens: Map<fs.PathLike, Map<string, number>> = new Map();
-    for (const [key, value] of arr) {
-      tokens.set(key, new Map(value));
-    }
-
-    return tokens;
   }
 }

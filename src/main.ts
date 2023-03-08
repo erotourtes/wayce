@@ -15,8 +15,6 @@ await engine.index(files);
 
 // engine.print();
 
-engine.save();
-
 // import EngineFactory from "./Engine/EngineFactory.js";
 //
 // const engine = EngineFactory.defaultEngine;
