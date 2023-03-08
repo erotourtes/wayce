@@ -13,6 +13,8 @@ const engine = EngineFactory.defaultEngine;
 
 await engine.index(files);
 
+engine.print();
+
 // engine.print();
 
 // import EngineFactory from "./Engine/EngineFactory.js";

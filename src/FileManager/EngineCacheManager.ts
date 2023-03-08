@@ -2,13 +2,21 @@ import fs from "node:fs";
 import * as T from "../Utils/types.js";
 import logger from "../Utils/logger.js";
 
-export default class EngineCacheManager implements T.CacheManager {
+export default class EngineCacheManager implements T.CacheManager<T.Tokens> {
   async getCache() {
-    const cache = fs.readFileSync(process.env.ENGINE_CACHE as string, "utf-8");
+    try {
+      const cache = fs.readFileSync(
+        process.env.ENGINE_CACHE as string,
+        "utf-8"
+      );
 
-    const parsedCache = JSON.parse(cache);
+      const parsedCache = JSON.parse(cache);
 
-    return this.parseTokensFromArr(parsedCache);
+      return this.parseTokensFromArr(parsedCache);
+    } catch (err) {
+      logger(`Engine cache has some problems ${err}`);
+      return null;
+    }
   }
 
   save(tokens: T.Tokens) {

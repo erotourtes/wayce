@@ -11,7 +11,7 @@ export interface IFileIO {
 
 export type Tokens = Map<fs.PathLike, Map<string, number>>;
 
-export interface CacheManager {
-  getCache(): Promise<Tokens>;
-  save(tokens: Tokens): void;
+export interface CacheManager<T> {
+  getCache(): Promise<T | null>;
+  save(cache: T): void;
 }

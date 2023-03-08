@@ -7,7 +7,7 @@ export default class Lexer {
 
   constructor(
     private Tokenizer: T.Tokenizable,
-    private cacheManager: T.CacheManager
+    private cacheManager: T.CacheManager<T.Tokens>
   ) {}
 
   print() {
@@ -26,7 +26,9 @@ export default class Lexer {
 
     const promises = files.map((file) => this.indexFile(file));
 
-    return Promise.all(promises).then(() => {});
+    return Promise.all(promises).then(() => {
+      this.cacheManager.save(this.tokens);
+    });
   }
 
   private async indexFile(file: fs.PathLike): Promise<void> {
