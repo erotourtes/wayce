@@ -4,7 +4,7 @@ import { getPathes, clearCache } from "./FileManager/getPathes.js";
 import logger from "./Utils/logger.js";
 import EngineFactory from "./Engine/EngineFactory.js";
 
-clearCache();
+// clearCache();
 const files = await getPathes(["txt"]);
 
 console.log(files);
@@ -13,7 +13,9 @@ const engine = EngineFactory.defaultEngine;
 
 await engine.index(files);
 
-engine.print();
+// engine.print();
+
+engine.save();
 
 // import EngineFactory from "./Engine/EngineFactory.js";
 //
