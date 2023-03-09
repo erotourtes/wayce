@@ -1,19 +1,28 @@
 import "./config.js";
 
-import { getPathes, clearCache } from "./FileManager/getPathes.js";
-import logger from "./Utils/logger.js";
-import EngineFactory from "./Engine/EngineFactory.js";
+// import { getPathes, clearCache } from "./FileManager/getPathes.js";
+// import logger from "./Utils/logger.js";
+// import EngineFactory from "./Engine/EngineFactory.js";
+//
+// // clearCache();
+// const files = await getPathes(["txt"]);
+//
+// console.log(files);
+//
+// const engine = EngineFactory.defaultEngine;
+//
+// await engine.index(files);
+//
+// engine.print();
 
-// clearCache();
-const files = await getPathes(["txt"]);
+import PathesManager from "./FileManager/PathesManager.js";
+import PathesCacheManager from "./FileManager/PathesCacheManager.js";
 
-console.log(files);
+const cacheManager = new PathesManager(new PathesCacheManager());
 
-const engine = EngineFactory.defaultEngine;
+// await cacheManager.clearCache();
+console.log(await cacheManager.getPathes(["txt"]));
 
-await engine.index(files);
-
-engine.print();
 
 // engine.print();
 

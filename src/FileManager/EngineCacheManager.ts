@@ -3,13 +3,11 @@ import * as T from "../Utils/types.js";
 import logger from "../Utils/logger.js";
 
 export default class EngineCacheManager implements T.CacheManager<T.Tokens> {
+  private PATH = process.env.ENGINE_CACHE as string;
+
   async getCache() {
     try {
-      const cache = fs.readFileSync(
-        process.env.ENGINE_CACHE as string,
-        "utf-8"
-      );
-
+      const cache = fs.readFileSync("utf-8").toString();
       const parsedCache = JSON.parse(cache);
 
       return this.parseTokensFromArr(parsedCache);
@@ -19,12 +17,19 @@ export default class EngineCacheManager implements T.CacheManager<T.Tokens> {
     }
   }
 
-  save(tokens: T.Tokens) {
+  async save(tokens: T.Tokens) {
     logger("saving engine cache");
-    fs.promises.writeFile(
-      process.env.ENGINE_CACHE as string,
+    return fs.promises.writeFile(
+      this.PATH,
       JSON.stringify(this.parseTokensToArray(tokens))
     );
+  }
+
+  async clear() {
+    logger("clearing engine cache");
+    return fs.promises.rm(this.PATH).catch((err) => {
+      logger(`can't remove engine cache ${err}`);
+    });
   }
 
   private parseTokensFromArr(arr: [fs.PathLike, [string, number][]][]) {
