@@ -1,13 +1,15 @@
-import Lexer from "./Lexer.js";
-import Factory from "./Factory.js";
 import fs from "node:fs";
+import LexerFactory from "./LexerFactory.js";
 import Tokenizer from "./Tokenizer.js";
+import PathesManager from "../FileManager/PathesManager.js";
 
 export default class Engine {
-  lexer: Lexer;
+  private lexer;
 
   constructor() {
-    this.lexer = Factory.defaultLexer;
+    this.lexer = LexerFactory();
+    const pathes = new PathesManager();
+    pathes.getPathes(["txt"]).then((p) => this.lexer.index(p));
   }
 
   search(query: string): fs.PathLike[] {

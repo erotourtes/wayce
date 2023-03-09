@@ -1,12 +1,12 @@
 import fs from "node:fs";
 import { logger } from "../Utils/Utils.js";
 import * as T from "../Utils/types.js";
+import Tokenizer from "./Tokenizer.js";
 
 export default class Lexer {
   private tokens: Map<fs.PathLike, Map<string, number>> = new Map();
 
   constructor(
-    private Tokenizer: T.Tokenizable,
     private cacheManager: T.CacheManager<T.Tokens>
   ) {}
 
@@ -42,7 +42,7 @@ export default class Lexer {
 
     return filePromise
       .then((content) => {
-        const iter = this.Tokenizer.getIterator(content);
+        const iter = new Tokenizer(content);
 
         for (const token of iter) {
           tokens.set(token, (tokens.get(token) || 0) + 1);
