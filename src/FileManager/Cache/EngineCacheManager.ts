@@ -1,13 +1,13 @@
 import fs from "node:fs";
-import * as T from "../Utils/types.js";
-import logger from "../Utils/logger.js";
+import * as T from "../../Utils/types.js";
+import logger from "../../Utils/logger.js";
 
 export default class EngineCacheManager implements T.CacheManager<T.Tokens> {
   private PATH = process.env.ENGINE_CACHE as string;
 
   async getCache() {
     try {
-      const cache = fs.readFileSync("utf-8").toString();
+      const cache = fs.readFileSync(this.PATH, "utf-8").toString();
       const parsedCache = JSON.parse(cache);
 
       return this.parseTokensFromArr(parsedCache);

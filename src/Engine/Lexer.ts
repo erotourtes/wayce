@@ -19,7 +19,7 @@ export default class Lexer {
 
     const cache = await this.cacheManager.getCache();
     if (cache?.size === files.length) {
-      logger("Engine's Cache found");
+      logger("Reading lexer from cache");
       this.tokens = cache;
       return Promise.resolve();
     }

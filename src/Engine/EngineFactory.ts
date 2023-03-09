@@ -1,7 +1,7 @@
 import Lexer from "./Lexer.js";
 import Tokenizer from "./Tokenizer.js";
 import * as T from "../Utils/types.js";
-import EngineCacheManager from "../FileManager/EngineCacheManager.js";
+import EngineCacheManager from "../FileManager/Cache/EngineCacheManager.js";
 
 export default class EngineFactory {
   static get defaultEngine() {
@@ -12,7 +12,6 @@ export default class EngineFactory {
     };
 
     const cacheManager = new EngineCacheManager();
-
 
     const engine = new Lexer(tokenizer, cacheManager);
 

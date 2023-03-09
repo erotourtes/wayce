@@ -1,6 +1,6 @@
 import fs from "node:fs";
-import * as T from "../Utils/types.js";
-import logger from "../Utils/logger.js";
+import * as T from "../../Utils/types.js";
+import logger from "../../Utils/logger.js";
 import os from "node:os";
 
 export default class PathesCacheManager implements T.CacheManager<T.Pathes> {
@@ -8,8 +8,6 @@ export default class PathesCacheManager implements T.CacheManager<T.Pathes> {
 
   async getCache() {
     try {
-      logger("Reading cache");
-
       const [line, ...content] = fs
         .readFileSync(this.TMP_PATH, "utf-8")
         .split(os.EOL);

@@ -2,6 +2,7 @@ import fs from "node:fs";
 import FindFiles from "../FileManager/FindFiles.js";
 import logger from "../Utils/logger.js";
 import * as T from "../Utils/types.js";
+import PathesCacheManager from "./Cache/PathesCacheManager.js";
 
 export default class PathesManager {
   private filterLargeFiles(path: string) {
@@ -13,16 +14,18 @@ export default class PathesManager {
   private cache: T.Pathes | null = null;
   private startPath = process.env.START_PATH as string;
 
-  constructor(private cacheManager: T.CacheManager<T.Pathes>) {}
+  constructor(
+    private cacheManager: T.CacheManager<T.Pathes> = new PathesCacheManager()
+  ) {}
 
   async getPathes(extensions: string[]) {
-    if (this.cache) return this.cache;
+    if (this.cache) return this.cache.content;
 
     this.cache = await this.cacheManager.getCache();
 
     if (this.cache && this.isSame(extensions)) {
-      logger("Reading from cache");
-      return this.cache.content;
+      logger("Reading pathes from cache");
+      return this.cache.content as fs.PathLike[];
     }
 
     this.cache = {
