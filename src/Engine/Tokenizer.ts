@@ -16,7 +16,7 @@ export default class Tokenizer implements IterableIterator<string> {
     this.fileChars = this.fileChars.slice(index);
 
     return {
-      done: this.fileChars.length <= 0,
+      done: this.fileChars.length <= 0 && token.length === 0,
       value: token?.toLowerCase(),
     };
   }
