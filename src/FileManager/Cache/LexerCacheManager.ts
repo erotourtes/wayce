@@ -2,7 +2,7 @@ import fs from "node:fs";
 import * as T from "../../Utils/types.js";
 import logger from "../../Utils/logger.js";
 
-export default class EngineCacheManager implements T.CacheManager<T.Tokens> {
+export default class LexerCacheManager implements T.CacheManager<T.Tokens> {
   private PATH = process.env.ENGINE_CACHE as string;
 
   async getCache() {
