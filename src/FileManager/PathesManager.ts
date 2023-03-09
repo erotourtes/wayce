@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import FindFiles from "../FileManager/FindFiles.js";
-import logger from "../Utils/logger.js";
+import { logger } from "../Utils/Utils.js";
 import * as T from "../Utils/types.js";
 import PathesCacheManager from "./Cache/PathesCacheManager.js";
 

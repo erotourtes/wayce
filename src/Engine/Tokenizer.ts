@@ -1,3 +1,5 @@
+import * as U from "../Utils/Utils.js";
+
 export default class Tokenizer implements IterableIterator<string> {
   private fileChars: string[];
 
@@ -24,11 +26,11 @@ export default class Tokenizer implements IterableIterator<string> {
   private indexOfNextToken(): number {
     this.trim();
 
-    if (this.isDigit(this.fileChars[0])) {
-      return this.indexOfTokenWhile(this.isDigit);
+    if (U.isDigit(this.fileChars[0])) {
+      return this.indexOfTokenWhile(U.isDigit);
     }
 
-    return this.indexOfTokenWhile(this.isLetter);
+    return this.indexOfTokenWhile(U.isLetter);
   }
 
   private indexOfTokenWhile(predicate: (ch: string) => boolean) {
@@ -50,21 +52,7 @@ export default class Tokenizer implements IterableIterator<string> {
     }
   }
 
-  private isLetter(ch: string): boolean {
-    if (ch === undefined) return false;
-
-    ch = ch.toLowerCase();
-    return (
-      "a".charCodeAt(0) <= ch.charCodeAt(0) &&
-      ch.charCodeAt(0) <= "z".charCodeAt(0)
-    );
-  }
-
-  private isDigit(ch: string): boolean {
-    return !Number.isNaN(parseFloat(ch));
-  }
-
   private isNeeded(ch: string): boolean {
-    return this.isLetter(ch) || this.isDigit(ch);
+    return U.isLetter(ch) || U.isDigit(ch);
   }
 }

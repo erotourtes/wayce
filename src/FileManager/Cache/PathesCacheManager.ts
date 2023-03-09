@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import * as T from "../../Utils/types.js";
-import logger from "../../Utils/logger.js";
+import { logger } from "../../Utils/Utils.js";
 import os from "node:os";
 
 export default class PathesCacheManager implements T.CacheManager<T.Pathes> {

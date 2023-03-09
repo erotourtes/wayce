@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import * as T from "../../Utils/types.js";
-import logger from "../../Utils/logger.js";
+import { logger } from "../../Utils/Utils.js";
 
 export default class LexerCacheManager implements T.CacheManager<T.Tokens> {
   private PATH = process.env.ENGINE_CACHE as string;

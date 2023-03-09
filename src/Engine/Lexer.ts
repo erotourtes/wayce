@@ -1,5 +1,5 @@
 import fs from "node:fs";
-import logger from "../Utils/logger.js";
+import { logger } from "../Utils/Utils.js";
 import * as T from "../Utils/types.js";
 
 export default class Lexer {
