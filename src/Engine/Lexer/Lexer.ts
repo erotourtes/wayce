@@ -2,12 +2,13 @@ import fs from "node:fs";
 import { logger } from "../../Utils/Utils.js";
 import * as T from "../../Utils/types.js";
 import Tokenizer from "./Tokenizer.js";
+import LexerCache from "../Cache/LexerCache.js";
 
 export default class Lexer {
   private tokens: Map<fs.PathLike, Map<string, number>> = new Map();
 
   constructor(
-    private cacheManager: T.CacheManager<T.Tokens>
+    private cacheManager: T.CacheManager<T.Tokens> = new LexerCache(),
   ) {}
 
   print() {

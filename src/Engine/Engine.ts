@@ -1,39 +1,32 @@
 import fs from "node:fs";
-import LexerFactory from "./Lexer/LexerFactory.js";
+import Lexer from "./Lexer/Lexer.js";
 import Tokenizer from "./Lexer/Tokenizer.js";
 import PathesManager from "./FileManager/PathesManager.js";
 
-export default class Engine {
-  private lexer;
-  private pathes;
+const lexer = new Lexer();
+const pathesManager = new PathesManager();
 
-  constructor() {
-    this.lexer = LexerFactory();
-    this.pathes = new PathesManager();
-  }
+const tokensFrom = (query: string) => {
+  const tokenizer = new Tokenizer(query);
+  return [...tokenizer];
+};
 
-  async search(query: string) {
-    const pathes = await this.pathes.getPathes(["txt"]);
-    const indexed = await this.lexer.index(pathes);
-    const tokens = this.tokensFrom(query);
+export default async function search(query: string) {
+  const pathes = await pathesManager.getPathes(["txt"]);
+  const indexed = await lexer.index(pathes);
+  const tokens = tokensFrom(query);
 
-    const res: Map<fs.PathLike, number> = new Map();
+  const res: Map<fs.PathLike, number> = new Map();
 
-    for (const [file, fileTokens] of indexed) {
-      let count = 0;
-      for (const token of tokens) {
-        const fileTokenCount = fileTokens.get(token) || 0;
-        count += fileTokenCount;
-      }
-
-      res.set(file, count);
+  for (const [file, fileTokens] of indexed) {
+    let count = 0;
+    for (const token of tokens) {
+      const fileTokenCount = fileTokens.get(token) || 0;
+      count += fileTokenCount;
     }
 
-    return res;
+    res.set(file, count);
   }
 
-  private tokensFrom(query: string) {
-    const tokenizer = new Tokenizer(query);
-    return [...tokenizer];
-  }
+  return res;
 }

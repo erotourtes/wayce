@@ -14,9 +14,6 @@ import "./config.js";
 
 // engine.print();
 
-import Engine from "./Engine/Engine.js";
+import search from "./Engine/Engine.js";
 
-
-const engine = new Engine();
-
-console.log(await engine.search("words is going to nvim"));
+console.log(await search("words is going to nvim"));

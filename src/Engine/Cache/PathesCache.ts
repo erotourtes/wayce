@@ -3,7 +3,7 @@ import * as T from "../../Utils/types.js";
 import { logger } from "../../Utils/Utils.js";
 import os from "node:os";
 
-export default class PathesCacheManager implements T.CacheManager<T.Pathes> {
+export default class PathesCache implements T.CacheManager<T.Pathes> {
   private TMP_PATH = process.env.PATHES_CACHE as string;
 
   async getCache() {
