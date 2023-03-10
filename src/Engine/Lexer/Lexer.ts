@@ -1,6 +1,6 @@
 import fs from "node:fs";
-import { logger } from "../Utils/Utils.js";
-import * as T from "../Utils/types.js";
+import { logger } from "../../Utils/Utils.js";
+import * as T from "../../Utils/types.js";
 import Tokenizer from "./Tokenizer.js";
 
 export default class Lexer {
@@ -14,20 +14,21 @@ export default class Lexer {
     console.log(this.tokens);
   }
 
-  async index(files: fs.PathLike[]): Promise<void> {
+  async index(files: fs.PathLike[]) {
     logger("indexing");
 
     const cache = await this.cacheManager.getCache();
     if (cache?.size === files.length) {
       logger("Reading lexer from cache");
       this.tokens = cache;
-      return Promise.resolve();
+      return Promise.resolve(this.tokens);
     }
 
     const promises = files.map((file) => this.indexFile(file));
 
     return Promise.all(promises).then(() => {
       this.cacheManager.save(this.tokens);
+      return this.tokens;
     });
   }
 

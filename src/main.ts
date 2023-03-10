@@ -19,4 +19,4 @@ import Engine from "./Engine/Engine.js";
 
 const engine = new Engine();
 
-console.log(engine.search("words"));
+console.log(await engine.search("words is going to nvim"));

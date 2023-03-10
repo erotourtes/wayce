@@ -1,4 +1,4 @@
-import * as U from "../Utils/Utils.js";
+import * as U from "../../Utils/Utils.js";
 
 export default class Tokenizer implements IterableIterator<string> {
   private fileChars: string[];
