@@ -28,14 +28,9 @@ export default class PathesCache implements T.CacheManager<T.Pathes> {
   }
 
   async clear() {
-    try {
-      logger("Removing cache");
-      return fs.promises.rm(this.TMP_PATH).catch((err) => {
-        logger(`Cant remove Pathes cache ${err}`);
-      });
-    } catch (err) {
-      logger(`Error removing pathe's cache ${err}`);
-      return;
-    }
+    logger("Removing cache");
+    return fs.promises.rm(this.TMP_PATH).catch((err) => {
+      logger(`Cant remove Pathes cache ${err}`);
+    });
   }
 }
