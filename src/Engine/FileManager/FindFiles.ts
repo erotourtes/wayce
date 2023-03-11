@@ -46,7 +46,8 @@ export default class FindFiles {
 
   private isRightFile(file: fs.Dirent) {
     return (
-      file.isFile() && this.extensions.some((ext) => file.name.endsWith(ext))
+      file.isFile() &&
+      this.extensions.some((ext) => file.name.split(".").pop() === ext)
     );
   }
 
@@ -78,5 +79,4 @@ export default class FindFiles {
       return this.findFiles;
     }
   };
-
 }

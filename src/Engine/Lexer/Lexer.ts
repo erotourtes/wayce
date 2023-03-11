@@ -37,7 +37,14 @@ export default class Lexer {
 
   private async indexFile(file: fs.PathLike): Promise<void> {
     const ext = this.fileExtension(file);
-    const content = await this.parsers[ext](file).catch((err) => {
+    const parser = this.parsers[ext];
+    if (!parser)  {
+      logger(`No parser for ${ext} files`);
+      return Promise.resolve();
+    }
+
+    const parsedPromise = parser(file);
+    const content = await parsedPromise.catch((err) => {
       logger(err);
     });
 

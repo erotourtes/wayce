@@ -6,6 +6,7 @@ import * as T from "../Utils/types.js";
 
 const fileParsers: T.Parsers = {
   txt: (path: fs.PathLike) => fs.promises.readFile(path, "utf-8"),
+  js: (path: fs.PathLike) => fs.promises.readFile(path, "utf-8"),
 };
 
 const lexer = new Lexer(fileParsers);
