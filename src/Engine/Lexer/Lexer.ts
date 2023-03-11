@@ -56,7 +56,6 @@ export default class Lexer {
       logger(err);
     });
 
-
     if (!this.tokensPerFile.has(file)) this.tokensPerFile.set(file, new Map());
     const tokens = this.tokensPerFile.get(file) as Map<string, number>;
 

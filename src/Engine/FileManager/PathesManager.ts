@@ -18,22 +18,24 @@ export default class PathesManager {
     this.cache = await this.cacheManager.getCache();
     logger(`pathes cache: ${this.cache?.content.length || 0}`);
 
-    if (this.cache) {
-      logger("Reading pathes from cache");
-    }
-
     const newPathes = await this.findNew(extensions);
 
-    this.cache = {
-      ext: extensions,
-      content: [
-        ...(this.cache?.content || []),
-        ...(newPathes),
-      ],
-    };
+    if (newPathes.length > 0) {
+      logger("New pathes found");
+      this.cache = {
+        ext: extensions,
+        content: [...(this.cache?.content || []), ...newPathes],
+      };
 
-    logger("Writing to cache");
-    this.cacheManager.save(this.cache);
+      logger("Writing to cache");
+      this.cacheManager.save(this.cache);
+    }
+
+    if (this.cache === null) {
+      throw new Error(
+        "This shouldn't happend: Cache is null; Maybe you forgot to add parser"
+      );
+    }
 
     return this.cache.content;
   }
