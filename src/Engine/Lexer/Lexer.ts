@@ -36,31 +36,25 @@ export default class Lexer {
 
   private async indexFile(file: fs.PathLike): Promise<void> {
     const ext = this.fileExtension(file);
-    const filePromise = this.parsers[ext](file);
+    const content = await this.parsers[ext](file).catch((err) => {
+      logger(err);
+    });
 
-    if (!this.tokens.has(file)) {
-      this.tokens.set(file, new Map());
-    }
+    if (!content) return Promise.resolve();
 
+    if (!this.tokens.has(file)) this.tokens.set(file, new Map());
     const tokens = this.tokens.get(file) as Map<string, number>;
 
-    return filePromise
-      .then((content) => {
-        let totalWordsCount = 0;
+    let totalWordsCount = 0;
+    const iter = new Tokenizer(content);
+    for (const token of iter) {
+      tokens.set(token, (tokens.get(token) || 0) + 1);
+      totalWordsCount++;
+    }
 
-        const iter = new Tokenizer(content);
-        for (const token of iter) {
-          tokens.set(token, (tokens.get(token) || 0) + 1);
-          totalWordsCount++;
-        }
-
-        for (const [token, count] of tokens) {
-          tokens.set(token, count / totalWordsCount);
-        }
-      })
-      .catch((err) => {
-        logger(err);
-      });
+    for (const [token, count] of tokens) {
+      tokens.set(token, count / totalWordsCount);
+    }
   }
 
   private fileExtension(file: fs.PathLike) {
