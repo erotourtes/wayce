@@ -8,6 +8,7 @@ export default class Lexer {
   private tokens: Map<fs.PathLike, Map<string, number>> = new Map();
 
   constructor(
+    private parsers: T.Parsers,
     private cacheManager: T.CacheManager<T.Tokens> = new LexerCache()
   ) {}
 
@@ -34,7 +35,8 @@ export default class Lexer {
   }
 
   private async indexFile(file: fs.PathLike): Promise<void> {
-    const filePromise = fs.promises.readFile(file, "utf-8");
+    const ext = this.fileExtension(file);
+    const filePromise = this.parsers[ext](file);
 
     if (!this.tokens.has(file)) {
       this.tokens.set(file, new Map());
@@ -59,5 +61,9 @@ export default class Lexer {
       .catch((err) => {
         logger(err);
       });
+  }
+
+  private fileExtension(file: fs.PathLike) {
+    return file.toString().split(".").pop() as string;
   }
 }

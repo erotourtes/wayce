@@ -14,3 +14,7 @@ export interface CacheManager<T> {
   save(cache: T): Promise<void>;
   clear(): Promise<void>;
 }
+
+export type Parsers = {
+  [key: string]: (path: fs.PathLike) => Promise<string>;
+};

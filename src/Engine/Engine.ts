@@ -2,8 +2,13 @@ import fs from "node:fs";
 import Lexer from "./Lexer/Lexer.js";
 import Tokenizer from "./Lexer/Tokenizer.js";
 import PathesManager from "./FileManager/PathesManager.js";
+import * as T from "../Utils/types.js";
 
-const lexer = new Lexer();
+const fileParsers: T.Parsers = {
+  txt: (path: fs.PathLike) => fs.promises.readFile(path, "utf-8"),
+};
+
+const lexer = new Lexer(fileParsers);
 const pathesManager = new PathesManager();
 
 const tokensFrom = (query: string) => {
@@ -12,7 +17,8 @@ const tokensFrom = (query: string) => {
 };
 
 export default async function search(query: string) {
-  const pathes = await pathesManager.getPathes(["txt"]);
+  const parsers = Object.keys(fileParsers);
+  const pathes = await pathesManager.getPathes(parsers);
   const indexed = await lexer.index(pathes);
   const tokens = tokensFrom(query);
 
