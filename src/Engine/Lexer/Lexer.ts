@@ -17,12 +17,6 @@ export default class Lexer {
   }
 
   async index(files: fs.PathLike[]) {
-    await this.indexWithTF(files);
-    this.applyIDF();
-    return this.tokensPerFile;
-  }
-
-  private async indexWithTF(files: fs.PathLike[]) {
     logger("indexing");
 
     const cache = await this.cacheManager.getCache();
@@ -31,17 +25,25 @@ export default class Lexer {
       this.tokensPerFile = cache;
     }
 
-    const promises = files
-      .filter((file) => this.filterIndexed(file))
-      .map((newFile) => this.indexFile(newFile));
+    const toIndex = files.filter((file) => this.filterIndexed(file));
+    if (toIndex.length > 0) {
+      await this.indexFiles(toIndex);
 
-    return Promise.all(promises).then(async () => {
+      this.applyIDF();
       await this.cacheManager.save(this.tokensPerFile);
-      return this.tokensPerFile;
-    });
+    }
+
+    return this.tokensPerFile;
   }
 
-  private async indexFile(file: fs.PathLike): Promise<void> {
+  private async indexFiles(files: fs.PathLike[]) {
+    const promises = files.map((file) => this.indexFileWithTF(file));
+
+    return Promise.all(promises);
+  }
+
+  private async indexFileWithTF(file: fs.PathLike): Promise<void> {
+    console.log(`\t--> indexing ${file}`);
     const ext = this.fileExtensionOf(file);
     const parser = this.parsers[ext];
     if (!parser) {
@@ -54,10 +56,11 @@ export default class Lexer {
       logger(err);
     });
 
-    if (!content) return Promise.resolve();
 
     if (!this.tokensPerFile.has(file)) this.tokensPerFile.set(file, new Map());
     const tokens = this.tokensPerFile.get(file) as Map<string, number>;
+
+    if (!content) return Promise.resolve();
 
     let totalWordsCount = 0;
     const iter = new Tokenizer(content);
@@ -76,6 +79,7 @@ export default class Lexer {
   }
 
   private applyIDF() {
+    logger("applying IDF to all files");
     const calulatedTokens = new Set();
     for (const [, fileTokens] of this.tokensPerFile) {
       const tokens = fileTokens.keys();

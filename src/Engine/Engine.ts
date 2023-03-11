@@ -35,16 +35,7 @@ export default async function search(query: string) {
     res.set(file, count);
   }
 
-  return res;
+  const sorted = [...res.entries()].sort((a, b) => b[1] - a[1]).slice(0, 10);
+
+  return sorted;
 }
-
-/*
-
-idf
-
-log (1 + N / n);
-
-where N is the total number of documents in the collection,
-and n is the number of documents that contain the term t.
-
-*/

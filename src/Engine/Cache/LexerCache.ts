@@ -47,7 +47,6 @@ export default class LexerCache implements T.CacheManager<T.Tokens> {
     for (const [key, value] of tokens) {
       arr.push([key, [...value]]);
     }
-    logger("parsed tokens to array");
 
     return arr;
   }
