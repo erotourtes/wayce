@@ -8,7 +8,7 @@ export default class Lexer {
   private tokens: Map<fs.PathLike, Map<string, number>> = new Map();
 
   constructor(
-    private cacheManager: T.CacheManager<T.Tokens> = new LexerCache(),
+    private cacheManager: T.CacheManager<T.Tokens> = new LexerCache()
   ) {}
 
   print() {
@@ -44,10 +44,16 @@ export default class Lexer {
 
     return filePromise
       .then((content) => {
-        const iter = new Tokenizer(content);
+        let totalWordsCount = 0;
 
+        const iter = new Tokenizer(content);
         for (const token of iter) {
           tokens.set(token, (tokens.get(token) || 0) + 1);
+          totalWordsCount++;
+        }
+
+        for (const [token, count] of tokens) {
+          tokens.set(token, count / totalWordsCount);
         }
       })
       .catch((err) => {
