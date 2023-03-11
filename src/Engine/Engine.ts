@@ -37,3 +37,14 @@ export default async function search(query: string) {
 
   return res;
 }
+
+/*
+
+idf
+
+log (1 + N / n);
+
+where N is the total number of documents in the collection,
+and n is the number of documents that contain the term t.
+
+*/
