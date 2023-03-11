@@ -8,7 +8,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node ./dist/main.js",
     "watch": "(tsc --watch &) && nodemon ./dist/main.js",
-    "compile": "tsc && node ./dist/main.js"
+    "compile": "tsc && node ./dist/main.js",
+    "debug": "tsc && node --inspect-brk ./dist/main.js"
   },
   "repository": {
     "type": "git",

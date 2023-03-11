@@ -20,16 +20,17 @@ export default class Lexer {
     logger("indexing");
 
     const cache = await this.cacheManager.getCache();
-    if (cache?.size === files.length) {
+    if (cache) {
       logger("Reading lexer from cache");
       this.tokens = cache;
-      return Promise.resolve(this.tokens);
     }
 
-    const promises = files.map((file) => this.indexFile(file));
+    const promises = files
+      .filter((file) => this.filterIndexed(file))
+      .map((newFile) => this.indexFile(newFile));
 
-    return Promise.all(promises).then(() => {
-      this.cacheManager.save(this.tokens);
+    return Promise.all(promises).then(async () => {
+      await this.cacheManager.save(this.tokens);
       return this.tokens;
     });
   }
@@ -59,5 +60,9 @@ export default class Lexer {
 
   private fileExtension(file: fs.PathLike) {
     return file.toString().split(".").pop() as string;
+  }
+
+  private filterIndexed(file: fs.PathLike) {
+    return !this.tokens.has(file);
   }
 }
