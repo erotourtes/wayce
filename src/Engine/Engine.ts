@@ -3,14 +3,19 @@ import Lexer from "./Lexer/Lexer.js";
 import Tokenizer from "./Lexer/Tokenizer.js";
 import PathesManager from "./FileManager/PathesManager.js";
 import * as T from "../Utils/types.js";
+import LexerCache from "./Cache/LexerCache.js";
+import PathesCache from "./Cache/PathesCache.js";
 
 const fileParsers: T.Parsers = {
   txt: (path: fs.PathLike) => fs.promises.readFile(path, "utf-8"),
   js: (path: fs.PathLike) => fs.promises.readFile(path, "utf-8"),
 };
 
-const lexer = new Lexer(fileParsers);
-const pathesManager = new PathesManager();
+const lexerCache = new LexerCache();
+const lexer = new Lexer(fileParsers, lexerCache);
+
+const pathesCache = new PathesCache();
+const pathesManager = new PathesManager(pathesCache);
 
 const tokensFrom = (query: string) => {
   const tokenizer = new Tokenizer(query);
