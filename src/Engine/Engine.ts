@@ -42,9 +42,11 @@ export default class Engine {
   }
 
   async syncWithFileSystem() {
-    this.pathesManager.clearCache();
+    return Promise.all([
+      this.pathesManager.clearCache(),
+      this.cleanIndexCache(),
+    ]);
   }
-
 
   private async getIndexed() {
     const parsers = Object.keys(this.fileParsers);
