@@ -27,6 +27,14 @@ export default class Lexer {
 
     const toIndex = files.filter((file) => this.filterIndexed(file));
     if (toIndex.length > 0) {
+      //TODO: remake this
+      const wasSaved = cache !== null && cache.size > 0;
+      const msg = wasSaved ?
+        "think about deleting all indexed cache for right results" : "";
+      logger(
+        // eslint-disable-next-line max-len
+        `Warning: idnexing will be done with new files: ${toIndex.length} ${msg}`
+      );
       await this.indexFiles(toIndex);
 
       this.applyIDF();
@@ -37,13 +45,33 @@ export default class Lexer {
   }
 
   private async indexFiles(files: fs.PathLike[]) {
-    const promises = files.map((file) => this.indexFileWithTF(file));
+    const promises = files.map((file) => this.indexFile(file));
 
     return Promise.all(promises);
   }
 
-  private async indexFileWithTF(file: fs.PathLike): Promise<void> {
+  private async indexFile(file: fs.PathLike): Promise<void> {
     console.log(`\t--> indexing ${file}`);
+
+    const content = await this.getContentOf(file);
+
+    // It needed to be here for cache to understand that file is indexed
+    if (!this.tokensPerFile.has(file)) this.tokensPerFile.set(file, new Map());
+    const tokens = this.tokensPerFile.get(file) as Map<string, number>;
+
+    if (!content) return Promise.resolve();
+
+    let totalTokens = 0;
+    const iter = new Tokenizer(content);
+    for (const token of iter) {
+      tokens.set(token, (tokens.get(token) || 0) + 1);
+      totalTokens++;
+    }
+
+    this.applyTF(totalTokens, tokens);
+  }
+
+  private async getContentOf(file: fs.PathLike) {
     const ext = this.fileExtensionOf(file);
     const parser = this.parsers[ext];
     if (!parser) {
@@ -51,24 +79,11 @@ export default class Lexer {
       return Promise.resolve();
     }
 
-    const parsedPromise = parser(file);
-    const content = await parsedPromise.catch((err) => {
+    const content = await parser(file).catch((err) => {
       logger(err);
     });
 
-    if (!this.tokensPerFile.has(file)) this.tokensPerFile.set(file, new Map());
-    const tokens = this.tokensPerFile.get(file) as Map<string, number>;
-
-    if (!content) return Promise.resolve();
-
-    let totalWordsCount = 0;
-    const iter = new Tokenizer(content);
-    for (const token of iter) {
-      tokens.set(token, (tokens.get(token) || 0) + 1);
-      totalWordsCount++;
-    }
-
-    this.applyTF(totalWordsCount, tokens);
+    return content;
   }
 
   private applyTF(totalWordsCount: number, tokens: Map<string, number>) {
