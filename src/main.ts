@@ -1,9 +1,10 @@
 import "./config.js";
+import Engine from "./Engine/Engine.js";
 
-import search from "./Engine/Engine.js";
 
-const res = await search("nvim");
-// const res1 = await search("read some words");
+const engine = new Engine();
+
+const res = await engine.search("read some words");
 
 console.log(res.map((r) => r.join(" ")));
 // console.log(res1);
