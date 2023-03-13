@@ -1,4 +1,1 @@
-
-const main = () => "hello world";
-
-main();
+import "./Web/server.js";
