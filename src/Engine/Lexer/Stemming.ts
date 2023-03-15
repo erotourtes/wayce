@@ -46,7 +46,7 @@ const a1 = (word: string) => {
   if (word.endsWith("sses")) return word.slice(0, -2);
   if (word.endsWith("ies")) return word.slice(0, -2);
   if (word.endsWith("ss")) return word;
-  if (word.endsWith("s")) return word.slice(0, -1);
+  if (word.endsWith("s") && m(word) > 1) return word.slice(0, -1);
 
   return word;
 };
