@@ -5,10 +5,11 @@ enum NODE_ENV {
   production = "production",
 }
 
-const START_PATH = `${os.homedir()}`;
+// const START_PATH = `${os.homedir()}`;
+const START_PATH = `${"/home/sirmax/Documents/node-doc/doc/api/"}`;
 const PATHES_CACHE = `${os.tmpdir()}/wayce_pathes.txt`;
 const ENGINE_CACHE = `${os.tmpdir()}/wayce_engine.txt`;
-const MAX_FILE_SIZE = Number(10 ** 5).toString();
+const MAX_FILE_SIZE = Number(10 ** 6).toString();
 
 const options: { [key: string]: string } = {
   NODE_ENV: NODE_ENV.development,

@@ -7,8 +7,9 @@ import LexerCache from "./Cache/LexerCache.js";
 
 export default class Engine {
   private fileParsers: T.Parsers = {
-    txt: (path: fs.PathLike) => fs.promises.readFile(path, "utf-8"),
-    js: (path: fs.PathLike) => fs.promises.readFile(path, "utf-8"),
+    // txt: (path: fs.PathLike) => fs.promises.readFile(path, "utf-8"),
+    // js: (path: fs.PathLike) => fs.promises.readFile(path, "utf-8"),
+    md: (path: fs.PathLike) => fs.promises.readFile(path, "utf-8"),
   };
 
   private lexerCache = new LexerCache();
