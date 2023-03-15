@@ -1,4 +1,5 @@
 import * as U from "../../Utils/Utils.js";
+import stemming from "./Stemming.js";
 
 export default class Tokenizer implements IterableIterator<string> {
   private fileChars: string[];
@@ -19,7 +20,7 @@ export default class Tokenizer implements IterableIterator<string> {
 
     return {
       done: this.fileChars.length <= 0 && token.length === 0,
-      value: token?.toLowerCase(),
+      value: token ? stemming(token) : "",
     };
   }
 

@@ -1,5 +1,5 @@
 import { expect, it, describe } from "@jest/globals";
-import stem from "./Stemming";
+import stem from "./Stemming.js";
 
 const testCases = [
   "cared -> care",

@@ -196,5 +196,5 @@ const pipe = (...fns: ((word: string) => string)[]) => (word: string) =>
 export default function porterStemming(word: string) {
   const piped = pipe(a1, b1, c1, c2, c3, c4, a5, b5);
 
-  return piped(word);
+  return piped(word.toLowerCase());
 }
