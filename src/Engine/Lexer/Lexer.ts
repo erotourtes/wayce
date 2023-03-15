@@ -45,14 +45,16 @@ export default class Lexer {
   }
 
   private async indexFiles(files: fs.PathLike[]) {
-    const promises = files.map((file) => this.indexFile(file));
+    const promises = files.map((file, index) => {
+      //TOASK: Is it ok to use promises all here?
+      logger(`\t--> indexing ${index} / ${files.length} -- ${file}`);
+      return this.indexFile(file);
+    });
 
     return Promise.all(promises);
   }
 
   private async indexFile(file: fs.PathLike): Promise<void> {
-    console.log(`\t--> indexing ${file}`);
-
     const content = await this.getContentOf(file);
 
     // It needed to be here for cache to understand that file is indexed
@@ -110,7 +112,7 @@ export default class Lexer {
   }
 
   private calculateIDF(token: string) {
-    const N = this.tokensPerFile.size;
+    const N = this.tokensPerFile.size + 1;
 
     let n = 1; // to avoid division by zero
     for (const [, fileTokens] of this.tokensPerFile) {

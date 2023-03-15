@@ -5,7 +5,7 @@
   "main": "main.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "start": "node ./dist/main.js",
     "watch": "(tsc --watch &) && nodemon ./dist/main.js",
     "compile": "tsc && node ./dist/main.js",
@@ -23,10 +23,15 @@
   },
   "homepage": "https://github.com/erotourtes/wayce#readme",
   "devDependencies": {
+    "@babel/core": "^7.21.3",
+    "@babel/preset-env": "^7.20.2",
+    "@babel/preset-typescript": "^7.21.0",
     "@types/node": "^18.14.6",
     "@typescript-eslint/eslint-plugin": "^5.54.0",
     "@typescript-eslint/parser": "^5.54.0",
+    "babel-jest": "^29.5.0",
     "eslint": "^8.35.0",
+    "jest": "^29.5.0",
     "nodemon": "^2.0.21",
     "typescript": "^4.9.5"
   }
