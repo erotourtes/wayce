@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import * as U from "../../Utils/Utils.js";
 
 export default class FindFiles {
   private stack: string[] = [];
@@ -47,7 +48,7 @@ export default class FindFiles {
   private isRightFile(file: fs.Dirent) {
     return (
       file.isFile() &&
-      this.extensions.some((ext) => file.name.split(".").pop() === ext)
+      this.extensions.some((ext) => U.fileExtensionOf(file.name) === ext)
     );
   }
 

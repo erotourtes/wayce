@@ -3,7 +3,7 @@ import Engine from "./Engine/Engine.js";
 
 const engine = new Engine();
 
-// await engine.syncWithFileSystem();
+await engine.syncWithFileSystem();
 
 const res = await engine.search(`Start Https Server`);
 

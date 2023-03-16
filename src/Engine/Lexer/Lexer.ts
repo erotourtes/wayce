@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import { logger } from "../../Utils/Utils.js";
 import * as T from "../../Utils/types.js";
+import * as U from "../../Utils/Utils.js";
 import Tokenizer from "./Tokenizer.js";
 import LexerCache from "../Cache/LexerCache.js";
 
@@ -70,11 +71,13 @@ export default class Lexer {
       totalTokens++;
     }
 
+    logger(`\t\t--> total tokens: ${totalTokens} -- applying TF`);
     this.applyTF(totalTokens, tokens);
+    logger(`\t\t--> indexed ${file}`);
   }
 
   private async getContentOf(file: fs.PathLike) {
-    const ext = this.fileExtensionOf(file);
+    const ext = U.fileExtensionOf(file);
     const parser = this.parsers[ext];
     if (!parser) {
       logger(`No parser for ${ext} files`);
@@ -129,10 +132,6 @@ export default class Lexer {
         fileTokens.set(token, tf * idf);
       }
     }
-  }
-
-  private fileExtensionOf(file: fs.PathLike) {
-    return file.toString().split(".").pop() as string;
   }
 
   private filterIndexed(file: fs.PathLike) {
