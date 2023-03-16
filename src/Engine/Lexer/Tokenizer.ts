@@ -2,10 +2,11 @@ import * as U from "../../Utils/Utils.js";
 import stemming from "./Stemming.js";
 
 export default class Tokenizer implements IterableIterator<string> {
-  private fileChars: string[];
+  // TOASK: DO i need to implement my own queue?
+  private fileChars: U.Queue<string>;
 
   constructor(text: string) {
-    this.fileChars = text.split("");
+    this.fileChars = U.Queue.fromIterable<string>(text.split(""));
   }
 
   [Symbol.iterator]() {
@@ -13,44 +14,42 @@ export default class Tokenizer implements IterableIterator<string> {
   }
 
   next(): IteratorResult<string> {
-    const index = this.indexOfNextToken();
-
-    const token = this.fileChars.slice(0, index).join("");
-    this.fileChars = this.fileChars.slice(index);
+    const token = this.nextToken();
 
     return {
-      done: this.fileChars.length <= 0 && token.length === 0,
+      done: this.fileChars.size <= 0 && token.length === 0,
       value: token ? stemming(token) : "",
     };
   }
 
-  private indexOfNextToken(): number {
+  private nextToken() {
     this.trim();
 
-    if (U.isDigit(this.fileChars[0])) {
-      return this.indexOfTokenWhile(U.isDigit);
+    if (U.isDigit(this.fileChars.peek() || "")) {
+      return this.charsWhile(U.isDigit).join("");
     }
 
-    return this.indexOfTokenWhile(U.isLetter);
+    return this.charsWhile(U.isLetter).join("");
   }
 
-  private indexOfTokenWhile(predicate: (ch: string) => boolean) {
-    let index = 0;
+  private charsWhile(predicate: (ch: string) => boolean) {
+    const chars: string[] = [];
 
-    while (this.fileChars.length > 0) {
-      // TODO - linked list instead of array;
-      const ch = this.fileChars[index]?.toLowerCase() as string;
-      if (predicate(ch)) index++;
+    while (this.fileChars.size > 0) {
+      const ch = this.fileChars.peek() as string;
+      if (predicate(ch)) chars.push(this.fileChars.dequeue() as string);
       else break;
     }
 
-    return index;
+    return chars;
   }
 
   private trim(): void {
-    while (this.fileChars.length > 0 && !this.isNeeded(this.fileChars[0])) {
-      this.fileChars.shift();
-    }
+    while (
+      this.fileChars.size > 0 &&
+      !this.isNeeded(this.fileChars.peek() || "")
+    )
+      this.fileChars.dequeue();
   }
 
   private isNeeded(ch: string): boolean {
