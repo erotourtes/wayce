@@ -48,7 +48,7 @@ export default class FindFiles {
   private isRightFile(file: fs.Dirent) {
     return (
       file.isFile() &&
-      this.extensions.some((ext) => U.fileExtensionOf(file.name) === ext)
+      this.extensions.includes(U.fileExtensionOf(file.name) || "")
     );
   }
 

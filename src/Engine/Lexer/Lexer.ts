@@ -77,7 +77,7 @@ export default class Lexer {
   }
 
   private async getContentOf(file: fs.PathLike) {
-    const ext = U.fileExtensionOf(file);
+    const ext = U.fileExtensionOf(file) || "";
     const parser = this.parsers[ext];
     if (!parser) {
       logger(`No parser for ${ext} files`);

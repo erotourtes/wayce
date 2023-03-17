@@ -32,7 +32,7 @@ export function fileExtensionOf(file: fs.PathLike) {
   for (let i = fileName.length - 1; i >= 0; i--)
     if (fileName[i] === ".") return fileName.slice(i + 1);
 
-  throw new Error(`File ${file} has no extension`);
+  return undefined;
 }
 
 type Node<T> = {
