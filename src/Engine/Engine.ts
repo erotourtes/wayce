@@ -17,25 +17,23 @@ export default class Engine {
 
   private pathesManager = new PathesManager();
 
-  async search(query: string) {
+  async search(query: string, limit = 10) {
     const tokens = this.tokensFrom(query);
     const indexed = await this.getIndexed();
 
-    const res: Map<fs.PathLike, number> = new Map();
+    const res: [fs.PathLike, number][] = [];
 
     for (const [file, fileTokens] of indexed) {
-      let count = 0;
-      for (const token of tokens) {
-        const fileTokenCount = fileTokens.get(token) || 0;
-        count += fileTokenCount;
-      }
+      const count = tokens
+        .map((token) => fileTokens.get(token) || 0)
+        .reduce((val, acc) => val + acc);
 
-      res.set(file, count);
+      if (count > 0) res.push([file, count]);
     }
 
-    const sorted = [...res.entries()].sort((a, b) => b[1] - a[1]).slice(0, 10);
+    res.sort((a, b) => b[1] - a[1]);
 
-    return sorted;
+    return res.slice(0, limit);
   }
 
   async cleanIndexCache() {
