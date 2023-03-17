@@ -48,7 +48,7 @@ export default class Lexer {
   private async indexFiles(files: fs.PathLike[]) {
     const promises = files.map((file, index) => {
       //TOASK: Is it ok to use promises all here?
-      logger(`\t--> indexing ${index} / ${files.length} -- ${file}`);
+      logger(`\t--> indexing ${index + 1} / ${files.length} -- ${file}`);
       return this.indexFile(file);
     });
 
