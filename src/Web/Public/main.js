@@ -17,16 +17,21 @@
 // })(500);
 // let canSearch = true;
 
+import * as HTML from "./Components.js";
+
 const search = async (query) => {
+  HTML.removeAll();
+
   const url = new URL("/api/search", "http://localhost:3000");
   url.searchParams.append("input", query);
+  url.searchParams.append("limit", 40);
 
   const res = await fetch(url.href, {
     method: "POST",
     mode: "same-origin",
   }).then((response) => response.json());
 
-  return res;
+  return JSON.parse(res);
 };
 
 const input = document.querySelector("#input");
@@ -34,7 +39,10 @@ const input = document.querySelector("#input");
 input.onkeyup = (e) => {
   if (e.key === "Enter" && input.value.length > 0) {
     search(input.value).then((res) => {
-      console.log(res);
+      for (const item of res) {
+        const [ name, frequency ] = item;
+        HTML.addList(name, frequency);
+      }
     });
   }
 };
