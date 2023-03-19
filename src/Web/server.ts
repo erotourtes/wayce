@@ -4,7 +4,8 @@ import serveStatic from "./serveStatic.js";
 
 const PORT = 3000;
 
-const isStatic = (url: string) => url === "/" || url?.includes(".");
+const isStatic = (url: string) =>
+  url === "/" || (url?.includes(".") && !url?.includes("api"));
 const isApi = (url: string) => url?.startsWith("/api");
 
 const server = http.createServer(async (req, res) => {

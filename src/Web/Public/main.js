@@ -19,6 +19,18 @@
 
 import * as HTML from "./Components.js";
 
+const open = async (file) => {
+  const url = new URL("/api/open", "http://localhost:3000");
+  url.searchParams.append("path", file);
+
+  const res = await fetch(url.href, {
+    method: "PATCH",
+    mode: "same-origin",
+  });
+
+  return "done";
+}
+
 const search = async (query) => {
   HTML.removeAll();
 
@@ -36,22 +48,23 @@ const search = async (query) => {
 
 const input = document.querySelector("#input");
 
+const searchHandler = () => {
+  if (input.value.length === 0) return;
+
+  search(input.value).then((res) => {
+    for (const item of res) {
+      const [name, frequency] = item;
+      HTML.addList(name, frequency, open);
+    }
+  });
+};
+
 input.onkeyup = (e) => {
   if (e.key === "Enter" && input.value.length > 0) {
-    search(input.value).then((res) => {
-      for (const item of res) {
-        const [ name, frequency ] = item;
-        HTML.addList(name, frequency);
-      }
-    });
+    searchHandler();
   }
 };
 
 const searchBtn = document.querySelector("#search-btn");
 
-searchBtn.onclick = () => {
-  if (input.value.length === 0) return;
-  search(input.value).then((res) => {
-    console.log(res);
-  });
-};
+searchBtn.onclick = searchHandler;

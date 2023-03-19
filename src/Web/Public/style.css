@@ -118,6 +118,7 @@ li {
     padding: 10px;
     margin-bottom: 10px;
     border-radius: 0.75rem;
+    cursor: pointer;
     transition: 0.1s ease-in-out;
 }
 
