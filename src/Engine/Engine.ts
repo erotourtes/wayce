@@ -17,6 +17,10 @@ export default class Engine {
 
   private pathesManager = new PathesManager();
 
+  async init() {
+    await this.getIndexed();
+  }
+
   async search(query: string, limit = 10) {
     const tokens = this.tokensFrom(query);
     const indexed = await this.getIndexed();
