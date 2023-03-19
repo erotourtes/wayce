@@ -43,6 +43,12 @@ body {
     padding: 0 var(--margin) 0 var(--margin);
 }
 
+@media screen and (max-width: 768px) {
+    .search_menu {
+       padding: 0 5rem 0 5rem;
+    }
+}
+
 input[type="text"] {
     border: none;
     border-radius: 2rem;
