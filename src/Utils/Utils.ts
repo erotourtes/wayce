@@ -1,5 +1,3 @@
-import fs from "node:fs";
-
 export function isLetter(ch: string): boolean {
   if (ch === undefined) return false;
 
@@ -25,14 +23,6 @@ export function logger(message: string | string[] | Error) {
   }
 
   if (process.env.NODE_ENV === "development") console.log(message);
-}
-
-export function fileExtensionOf(file: fs.PathLike) {
-  const fileName = file.toString();
-  for (let i = fileName.length - 1; i >= 0; i--)
-    if (fileName[i] === ".") return fileName.slice(i + 1);
-
-  return undefined;
 }
 
 type Node<T> = {
