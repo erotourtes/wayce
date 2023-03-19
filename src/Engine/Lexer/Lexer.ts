@@ -21,22 +21,15 @@ export default class Lexer {
     logger("indexing");
 
     const cache = await this.cacheManager.getCache();
-    if (cache) {
+    const toIndex = files.filter((file) => !cache?.has(file)).length;
+
+    // Every new file causes reindexing
+    if (cache && toIndex === 0) {
       logger("Reading lexer from cache");
       this.tokensPerFile = cache;
-    }
-
-    const toIndex = files.filter((file) => this.filterIndexed(file));
-    if (toIndex.length > 0) {
-      //TODO: remake this
-      const wasSaved = cache !== null && cache.size > 0;
-      const msg = wasSaved ?
-        "think about deleting all indexed cache for right results" : "";
-      logger(
-        // eslint-disable-next-line max-len
-        `Warning: idnexing will be done with new files: ${toIndex.length} ${msg}`
-      );
-      await this.indexFiles(toIndex);
+    } else {
+      logger(`New files: ${toIndex}`);
+      await this.indexFiles(files);
 
       this.applyIDF();
       await this.cacheManager.save(this.tokensPerFile);
@@ -132,9 +125,5 @@ export default class Lexer {
         fileTokens.set(token, tf * idf);
       }
     }
-  }
-
-  private filterIndexed(file: fs.PathLike) {
-    return !this.tokensPerFile.has(file);
   }
 }
