@@ -11,7 +11,6 @@ const api: { [key: string]: any } = {
     JSON.stringify(await engine.search(query.input, +query.limit)),
   sync: () => "syncing",
   open: (query: { path: string }) => {
-    console.log(query.path);
     exec("google-chrome " + query.path);
     return "Done";
   },
@@ -25,7 +24,6 @@ export default async function handleApi(
 
   const query = url.parse(myUrl, true).query;
   const action = myUrl.split("?")[0].replace("/api/", "");
-  console.log("action is", action);
 
   const router = api[action];
 
