@@ -4,6 +4,7 @@ import Engine from "../Engine/Engine.js";
 import { exec } from "node:child_process";
 
 const engine = new Engine();
+await engine.init();
 
 const api: { [key: string]: any } = {
   search: async (query: { input: string; limit: string }) =>
