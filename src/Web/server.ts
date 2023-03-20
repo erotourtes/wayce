@@ -5,7 +5,7 @@ import serveStatic from "./serveStatic.js";
 const PORT = 3000;
 
 const isStatic = (url: string) =>
-  url === "/" || (url?.includes(".") && !url?.includes("api"));
+  url === "/" || (url?.includes("."));
 const isApi = (url: string) => url?.startsWith("/api");
 
 const server = http.createServer(async (req, res) => {
@@ -13,8 +13,8 @@ const server = http.createServer(async (req, res) => {
   console.log(`URL: ${url}`);
 
   try {
-    if (isStatic(url)) return serveStatic(req, res);
     if (isApi(url)) return handleApi(req, res);
+    if (isStatic(url)) return serveStatic(req, res);
 
     throw new Error("Not found");
   } catch (e) {
