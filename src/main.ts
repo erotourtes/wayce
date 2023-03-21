@@ -1,7 +1,7 @@
 import "./config.js";
-import Engine from "./Engine/Engine.js";
+import engineFactory from "./Engine/EngineFactory.js";
 
-const engine = new Engine();
+const engine = engineFactory();
 
 // await engine.syncWithFileSystem();
 
