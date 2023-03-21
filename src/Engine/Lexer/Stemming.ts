@@ -193,7 +193,11 @@ const b5 = (word: string) => {
 const pipe = (...fns: ((word: string) => string)[]) => (word: string) =>
   fns.reduce((acc, fn) => fn(acc), word);
 
+const isEnglish = (word: string) => /[a-zA-Z]/.test(word);
+
 export default function porterStemming(word: string) {
+  if (!isEnglish(word)) return word.toUpperCase();
+
   const piped = pipe(a1, b1, c1, c2, c3, c4, a5, b5);
 
   return piped(word.toLowerCase());

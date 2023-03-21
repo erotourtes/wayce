@@ -1,13 +1,7 @@
 import fs from "node:fs";
 
 export function isLetter(ch: string): boolean {
-  if (ch === undefined) return false;
-
-  ch = ch.toLowerCase();
-  return (
-    "a".charCodeAt(0) <= ch.charCodeAt(0) &&
-    ch.charCodeAt(0) <= "z".charCodeAt(0)
-  );
+  return !ch ? false :  ch.toLowerCase() !== ch.toUpperCase();
 }
 
 export function isDigit(ch: string): boolean {
@@ -84,7 +78,6 @@ export class Queue<T> {
   peek() {
     return this.head?.value;
   }
-
 
   static fromIterable<T>(items: T[]) {
     const list = new Queue<T>();
