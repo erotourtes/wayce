@@ -9,9 +9,10 @@ await engine.init();
 const api: { [key: string]: any } = {
   search: async (query: { input: string; limit: string }) =>
     JSON.stringify(await engine.search(query.input, +query.limit)),
-  sync: () => "syncing",
+  sync: async () => await engine.syncWithFileSystem(),
   open: (query: { path: string }) => {
-    exec("google-chrome " + query.path);
+    const command = process.platform.includes("win") ? "start" : "xdg-open";
+    exec(`${command} ${query.path}`);
     return "Done";
   },
 };
