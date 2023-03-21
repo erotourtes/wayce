@@ -38,7 +38,6 @@ const isO = (word: string) => {
   return isCVC && !forbidden.includes(word[len - 1]);
 };
 
-// TOASK
 const vowelsOf = (word: string) =>
   word.split("").filter((ch) => vowels.includes(ch)).length;
 

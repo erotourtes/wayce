@@ -1,7 +1,7 @@
 import fs from "node:fs";
 
 export function isLetter(ch: string): boolean {
-  return !ch ? false :  ch.toLowerCase() !== ch.toUpperCase();
+  return !ch ? false : ch.toLowerCase() !== ch.toUpperCase();
 }
 
 export function isDigit(ch: string): boolean {
@@ -9,6 +9,7 @@ export function isDigit(ch: string): boolean {
 }
 
 export function logger(message: string | string[] | Error) {
+  if (process.env.NODE_ENV === "production") return;
   if (message instanceof Error) {
     console.error(message);
     return;
@@ -18,7 +19,7 @@ export function logger(message: string | string[] | Error) {
     message.push("...");
   }
 
-  if (process.env.NODE_ENV === "development") console.log(message);
+  console.log(message);
 }
 
 export function fileExtensionOf(file: fs.PathLike) {
@@ -69,7 +70,6 @@ export class Queue<T> {
     const head = this.head;
     this.head = head.next;
 
-    // TOASK - is this needed?
     head.next = null;
 
     return head.value;

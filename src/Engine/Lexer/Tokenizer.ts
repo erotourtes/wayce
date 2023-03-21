@@ -2,7 +2,6 @@ import * as U from "../../Utils/Utils.js";
 import stemming from "./Stemming.js";
 
 export default class Tokenizer implements IterableIterator<string> {
-  // TOASK: DO i need to implement my own queue?
   private fileChars: U.Queue<string>;
 
   constructor(text: string) {
