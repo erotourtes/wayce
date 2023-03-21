@@ -64,6 +64,10 @@ export default class PathesManager {
   private filterLargeFiles(path: string) {
     const size = fs.statSync(path).size;
     const maxSize = parseInt(process.env.MAX_FILE_SIZE as string);
+
+    if (isNaN(maxSize)) throw new Error("MAX_FILE_SIZE is not a number");
+    if (maxSize === 0) return true;
+
     return size < maxSize;
   }
 }
