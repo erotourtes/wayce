@@ -18,7 +18,6 @@ export default class Engine {
     this.pathesManager = new PathesManager();
   }
 
-
   async init() {
     await this.getIndexed();
   }
