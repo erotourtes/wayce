@@ -45,10 +45,7 @@ export default class FindFiles {
   }
 
   private isRightFile(file: fs.Dirent) {
-    return (
-      file.isFile() &&
-      this.extensions.includes(path.extname(file.name))
-    );
+    return file.isFile() && this.extensions.includes(path.extname(file.name));
   }
 
   static get builder() {
@@ -66,6 +63,7 @@ export default class FindFiles {
     }
 
     addExtensions(...ext: string[]) {
+      ext = ext.map((e) => (e.startsWith(".") ? e : `.${e}`));
       this.findFiles.extensions.push(...ext);
       return this;
     }

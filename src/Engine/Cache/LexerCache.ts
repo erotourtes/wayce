@@ -19,10 +19,11 @@ export default class LexerCache implements T.CacheManager<T.Tokens> {
 
   async save(tokens: T.Tokens) {
     logger("saving engine cache");
-    return fs.promises.writeFile(
-      this.PATH,
-      JSON.stringify(this.parseTokensToArray(tokens))
-    );
+    return fs.promises
+      .writeFile(this.PATH, JSON.stringify(this.parseTokensToArray(tokens)))
+      .catch((err) => {
+        logger(`can't save engine cache ${err}`);
+      });
   }
 
   async clear() {

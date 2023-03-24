@@ -1,9 +1,9 @@
 import url from "node:url";
 import http from "node:http";
-import Engine from "../Engine/Engine.js";
+import engineFactory from "../Engine/EngineFactory.js";
 import { exec } from "node:child_process";
 
-const engine = new Engine();
+const engine = engineFactory();
 await engine.init();
 
 const api: { [key: string]: any } = {

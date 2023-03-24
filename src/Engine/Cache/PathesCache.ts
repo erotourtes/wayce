@@ -26,7 +26,9 @@ export default class PathesCache implements T.CacheManager<T.Pathes> {
     const content = `${pathes.ext.join(" ")}${os.EOL}${pathes.content.join(
       os.EOL
     )}`;
-    return fs.promises.writeFile(this.TMP_PATH, content);
+    return fs.promises.writeFile(this.TMP_PATH, content).catch((err) => {
+      logger(`Can't save pathes cache ${err}`);
+    });
   }
 
   async clear() {

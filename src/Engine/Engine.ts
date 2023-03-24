@@ -6,16 +6,17 @@ import * as T from "../Utils/types.js";
 import LexerCache from "./Cache/LexerCache.js";
 
 export default class Engine {
-  private fileParsers: T.Parsers = {
-    // txt: (path: fs.PathLike) => fs.promises.readFile(path, "utf-8"),
-    // js: (path: fs.PathLike) => fs.promises.readFile(path, "utf-8"),
-    ".md": (path: fs.PathLike) => fs.promises.readFile(path, "utf-8"),
-  };
+  private lexerCache;
+  private lexer;
 
-  private lexerCache = new LexerCache();
-  private lexer = new Lexer(this.fileParsers, this.lexerCache);
+  private pathesManager;
 
-  private pathesManager = new PathesManager();
+  constructor(private fileParsers: T.Parsers) {
+    this.lexerCache = new LexerCache();
+    this.lexer = new Lexer(this.fileParsers, this.lexerCache);
+
+    this.pathesManager = new PathesManager();
+  }
 
   async init() {
     await this.getIndexed();

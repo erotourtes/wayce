@@ -38,7 +38,6 @@ const isO = (word: string) => {
   return isCVC && !forbidden.includes(word[len - 1]);
 };
 
-// TOASK
 const vowelsOf = (word: string) =>
   word.split("").filter((ch) => vowels.includes(ch)).length;
 
@@ -193,7 +192,11 @@ const b5 = (word: string) => {
 const pipe = (...fns: ((word: string) => string)[]) => (word: string) =>
   fns.reduce((acc, fn) => fn(acc), word);
 
+const isEnglish = (word: string) => /[a-zA-Z]/.test(word);
+
 export default function porterStemming(word: string) {
+  if (!isEnglish(word)) return word.toUpperCase();
+
   const piped = pipe(a1, b1, c1, c2, c3, c4, a5, b5);
 
   return piped(word.toLowerCase());
