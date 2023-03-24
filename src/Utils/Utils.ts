@@ -7,7 +7,7 @@ export function isDigit(ch: string): boolean {
 }
 
 export function logger(message: string | string[] | Error) {
-  if (process.env.NODE_ENV === "production") return;
+  if (process.env["--env"] === "production") return;
   if (message instanceof Error) {
     console.error(message);
     return;

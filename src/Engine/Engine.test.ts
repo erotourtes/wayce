@@ -12,8 +12,8 @@ jest.mock("./Cache/LexerCache.ts", () =>
   }))
 );
 
-process.env.START_PATH = `${process.cwd()}/./Test/`;
-process.env.MAX_FILE_SIZE = "0";
+process.env["--start-path"] = `${process.cwd()}/./Test/`;
+process.env["--max-file-size"] = "0";
 
 const engine = new Engine({
   ".txt": (path) => fs.promises.readFile(path, "utf-8"),
