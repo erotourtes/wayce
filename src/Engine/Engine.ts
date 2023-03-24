@@ -31,7 +31,7 @@ export default class Engine {
     for (const [file, fileTokens] of indexed) {
       const count = tokens
         .map((token) => fileTokens.get(token) || 0)
-        .reduce((val, acc) => val + acc);
+        .reduce((val, acc) => val + acc, 0);
 
       if (count > 0) res.push([file, count]);
     }
@@ -49,6 +49,7 @@ export default class Engine {
     return Promise.all([
       this.pathesManager.clearCache(),
       this.cleanIndexCache(),
+      this.search(""),
     ]);
   }
 
