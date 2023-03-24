@@ -1,6 +1,7 @@
 import http from "node:http";
 import handleApi from "./handleApi.js";
 import serveStatic from "./serveStatic.js";
+import { logger } from "../Utils/Utils.js";
 
 const PORT = 3000;
 
@@ -10,7 +11,7 @@ const isApi = (url: string) => url?.startsWith("/api");
 
 const server = http.createServer(async (req, res) => {
   const url = req.url || "";
-  console.log(`URL: ${url}`);
+  logger(`URL: ${url}`);
 
   try {
     if (isApi(url)) return handleApi(req, res);
@@ -20,7 +21,7 @@ const server = http.createServer(async (req, res) => {
   } catch (e) {
     res.statusCode = 404;
     res.end(`error ${e}`);
-    console.log(e);
+    logger(e);
   }
 });
 
