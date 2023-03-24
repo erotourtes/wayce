@@ -1,3 +1,5 @@
 import "./config.js";
 
-import "./Web/server.js";
+import startServer from "./Web/server.js";
+
+startServer(3000);
