@@ -1,4 +1,10 @@
+import "./config.js";
+import engineFactory from "./Engine/EngineFactory.js";
 
-const main = () => "hello world";
+const engine = engineFactory();
 
-main();
+// await engine.syncWithFileSystem();
+
+const res = await engine.search("IO File");
+
+console.log(res);
