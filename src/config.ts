@@ -1,8 +1,9 @@
 import os from "node:os";
 
-enum NODE_ENV {
+export enum NODE_ENV {
   development = "development",
   production = "production",
+  test = "test",
 }
 
 const args = process.argv.slice(2);
