@@ -57,7 +57,7 @@ export default class PathesManager {
 
   private async findPathes(extensions: string[]) {
     logger("Searching files");
-    const finder = FindFiles.builder.addExtensions(...extensions).build();
+    const finder = new FindFiles(extensions);
     return (await finder.find(this.startPath)).filter(this.filterLargeFiles);
   }
 

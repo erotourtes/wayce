@@ -8,7 +8,10 @@ export default class FindFiles {
   private visited: Set<string> = new Set();
   private extensions: string[] = [];
 
-  private constructor() {}
+  constructor(ext: string[], folders?: string[]) {
+    this.extensions = ext;
+    this.forbidenFolders.push(...(folders || []));
+  }
 
   async find(rootPath: string) {
     this.stack.push(rootPath);
@@ -32,13 +35,13 @@ export default class FindFiles {
       if (this.visited.has(fullPath)) continue;
       this.visited.add(fullPath);
 
-      if (this.isRigthFolder(file)) this.stack.push(fullPath);
+      if (this.isRightFolder(file)) this.stack.push(fullPath);
 
       if (this.isRightFile(file)) this.foundFiles.push(fullPath);
     }
   }
 
-  private isRigthFolder(file: fs.Dirent): boolean {
+  private isRightFolder(file: fs.Dirent): boolean {
     const isDotFolder = file.name.startsWith(".");
     const isForbidenFolder = this.forbidenFolders.includes(file.name);
     return file.isDirectory() && !isDotFolder && !isForbidenFolder;
@@ -48,33 +51,7 @@ export default class FindFiles {
     return file.isFile() && this.extensions.includes(path.extname(file.name));
   }
 
-  static get builder() {
-    return new FindFiles.Builder();
-  }
-
   get found() {
     return this.foundFiles;
   }
-
-  private static Builder = class {
-    findFiles: FindFiles;
-    constructor() {
-      this.findFiles = new FindFiles();
-    }
-
-    addExtensions(...ext: string[]) {
-      ext = ext.map((e) => (e.startsWith(".") ? e : `.${e}`));
-      this.findFiles.extensions.push(...ext);
-      return this;
-    }
-
-    addForbidenFolders(...folder: string[]) {
-      this.findFiles.forbidenFolders.push(...folder);
-      return this;
-    }
-
-    build() {
-      return this.findFiles;
-    }
-  };
 }
