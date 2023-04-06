@@ -1,10 +1,7 @@
 import "./config.js";
-import engineFactory from "./Engine/EngineFactory.js";
+import startServer from "./Web/server.js";
 
-const engine = engineFactory();
+const env = process.env;
 
-// await engine.syncWithFileSystem();
-
-const res = await engine.search("IO File");
-
-console.log(res);
+if (env["--cli"] === "true") console.log("CLI is not implemented yet");
+else startServer(3000);

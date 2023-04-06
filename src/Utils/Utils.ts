@@ -1,4 +1,4 @@
-import fs from "node:fs";
+import { NODE_ENV } from "../config.js";
 
 export function isLetter(ch: string): boolean {
   return !ch ? false : ch.toLowerCase() !== ch.toUpperCase();
@@ -9,7 +9,9 @@ export function isDigit(ch: string): boolean {
 }
 
 export function logger(message: string | string[] | Error) {
-  if (process.env.NODE_ENV === "production") return;
+  const env = process.env["--env"];
+  if (env === NODE_ENV.test || env === NODE_ENV.production) return;
+
   if (message instanceof Error) {
     console.error(message);
     return;
@@ -20,14 +22,6 @@ export function logger(message: string | string[] | Error) {
   }
 
   console.log(message);
-}
-
-export function fileExtensionOf(file: fs.PathLike) {
-  const fileName = file.toString();
-  for (let i = fileName.length - 1; i >= 0; i--)
-    if (fileName[i] === ".") return fileName.slice(i + 1);
-
-  return undefined;
 }
 
 type Node<T> = {

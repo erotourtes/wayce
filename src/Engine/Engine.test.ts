@@ -1,4 +1,5 @@
 import { expect, it, describe } from "@jest/globals";
+import { NODE_ENV } from "../config.js";
 import Engine from "./Engine.js";
 import fs from "node:fs";
 
@@ -12,17 +13,18 @@ jest.mock("./Cache/LexerCache.ts", () =>
   }))
 );
 
-process.env.START_PATH = `${process.cwd()}/./Test/`;
-process.env.MAX_FILE_SIZE = "0";
+process.env["--env"] = NODE_ENV.test;
+process.env["--start-path"] = `${process.cwd()}/./Test/`;
+process.env["--max-file-size"] = "0";
 
 const engine = new Engine({
-  txt: (path) => fs.promises.readFile(path, "utf-8"),
+  ".txt": (path) => fs.promises.readFile(path, "utf-8"),
 });
 
 describe("Engine", () => {
   it("should find File3", async () => {
     expect((await engine.search("symbol is here", 1))[0][0]).toEqual(
-      "/home/sirmax/Files/Documents/projects/js/wayce/Test/File3.txt"
+      `${process.cwd()}/Test/File3.txt`
     );
   });
 });

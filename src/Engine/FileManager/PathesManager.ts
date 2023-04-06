@@ -6,7 +6,7 @@ import PathesCacheManager from "../Cache/PathesCache.js";
 
 export default class PathesManager {
   private cache: T.Pathes | null = null;
-  private startPath = process.env.START_PATH as string;
+  private startPath = process.env["--start-path"] as string;
 
   constructor(
     private cacheManager: T.CacheManager<T.Pathes> = new PathesCacheManager()
@@ -63,9 +63,9 @@ export default class PathesManager {
 
   private filterLargeFiles(path: string) {
     const size = fs.statSync(path).size;
-    const maxSize = parseInt(process.env.MAX_FILE_SIZE as string);
+    const maxSize = parseInt(process.env["--max-file-size"] as string);
 
-    if (isNaN(maxSize)) throw new Error("MAX_FILE_SIZE is not a number");
+    if (isNaN(maxSize)) throw new Error("--max-file-size is not a number");
     if (maxSize === 0) return true;
 
     return size < maxSize;

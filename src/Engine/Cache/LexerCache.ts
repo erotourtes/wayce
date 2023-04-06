@@ -3,7 +3,7 @@ import * as T from "../../Utils/types.js";
 import { logger } from "../../Utils/Utils.js";
 
 export default class LexerCache implements T.CacheManager<T.Tokens> {
-  private PATH = process.env.ENGINE_CACHE as string;
+  private PATH = process.env["--engine-cache"] as string;
 
   async getCache() {
     try {

@@ -1,9 +1,9 @@
 import fs from "node:fs";
 import { logger } from "../../Utils/Utils.js";
 import * as T from "../../Utils/types.js";
-import * as U from "../../Utils/Utils.js";
 import Tokenizer from "./Tokenizer.js";
 import LexerCache from "../Cache/LexerCache.js";
+import { extname } from "node:path";
 
 export default class Lexer {
   private tokensPerFile: Map<fs.PathLike, Map<string, number>> = new Map();
@@ -69,7 +69,7 @@ export default class Lexer {
   }
 
   private async getContentOf(file: fs.PathLike) {
-    const ext = U.fileExtensionOf(file) || "";
+    const ext = extname(file as string) || "";
     const parser = this.parsers[ext];
     if (!parser) {
       logger(`No parser for ${ext} files`);

@@ -1,21 +1,27 @@
 import os from "node:os";
 
-enum NODE_ENV {
+export enum NODE_ENV {
   development = "development",
   production = "production",
+  test = "test",
 }
 
-const START_PATH = `${os.homedir()}`;
-const PATHES_CACHE = `${os.tmpdir()}/wayce_pathes.txt`;
-const ENGINE_CACHE = `${os.tmpdir()}/wayce_engine.txt`;
-const MAX_FILE_SIZE = Number(10 ** 6).toString();
+const args = process.argv.slice(2);
 
-const options: { [key: string]: string } = {
-  NODE_ENV: NODE_ENV.development,
-  START_PATH,
-  PATHES_CACHE,
-  ENGINE_CACHE,
-  MAX_FILE_SIZE,
+const defaults: { [key: string]: string } = {
+  "--env": NODE_ENV.development,
+  "--start-path": `${os.homedir()}`,
+  "--pathes-cache": `${os.tmpdir()}/wayce_pathes.txt`,
+  "--engine-cache": `${os.tmpdir()}/wayce_engine.txt`,
+  "--max-file-size": Number(10 ** 6).toString(),
+  "--cli": "false",
 };
 
-for (const key in options) process.env[key] = options[key];
+for (const arg of args) {
+  const [key, value] = arg.split("=");
+
+  if (defaults[key])
+    defaults[key] = value ? value : "true";
+}
+
+for (const key in defaults) process.env[key] = defaults[key];
