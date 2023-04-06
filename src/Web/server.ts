@@ -24,6 +24,7 @@ export default function startServer(port: number) {
     }
   });
 
+  logger(`Server started on port ${port}`);
   server.listen(port);
 
   server.on("error", (err) => {
