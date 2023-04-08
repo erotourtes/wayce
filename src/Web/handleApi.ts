@@ -4,7 +4,6 @@ import engineFactory from "../Engine/EngineFactory.js";
 import { exec } from "node:child_process";
 
 const engine = engineFactory();
-await engine.init();
 
 const api: { [key: string]: any } = {
   search: async (query: { input: string; limit: string }) =>
@@ -22,7 +21,11 @@ const api: { [key: string]: any } = {
   },
 };
 
-export default async function handleApi(
+export async function init() {
+  await engine.init();
+}
+
+export async function handleApi(
   req: http.IncomingMessage,
   res: http.ServerResponse
 ) {
