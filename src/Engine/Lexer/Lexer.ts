@@ -26,7 +26,7 @@ export default class Lexer {
     const allContent =  contentProvider.getContent();
 
     // TODO isCacheValid
-    const paths = allContent.flatMap((pair) => pair[0]);
+    const paths = contentProvider.getPaths();
     const toIndex = paths.filter((path) => !cache?.has(path)).length;
     if (cache && toIndex === 0) {
       logger("Reading lexer from cache");

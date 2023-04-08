@@ -43,7 +43,7 @@ export default class Engine {
     return Promise.all([
       this.pathsManager.clearCache(),
       this.lexer.clearCache(),
-      this.search(""),
+      this.init(),
     ]);
   }
 
