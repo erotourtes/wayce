@@ -57,11 +57,10 @@ export default class Engine {
     const paths = await this.pathsManager.getPaths(parsers);
     const localProvider = new LocalContent(paths, this.fileParsers);
 
-    const indexed = await this.lexer.index(
+    return await this.lexer.index(
       localProvider,
       ...this.contentProviders
     );
-    return indexed;
   }
 
   private tokensFrom = (query: string) => {

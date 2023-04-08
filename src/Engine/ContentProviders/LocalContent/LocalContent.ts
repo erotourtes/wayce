@@ -6,6 +6,12 @@ import { extname } from "node:path";
 export default class LocalContent implements T.ContentProvider {
   constructor(private paths: string[], private parsers: T.Parsers) {}
 
+  async getContent() {
+    return this.paths.map(
+      (path) => [path, this.getContentOf(path)] as [string, Promise<string>]
+    );
+  }
+
   private getContentOf(path: fs.PathLike) {
     const ext = extname(path as string) || "";
     const parser = this.parsers[ext];
@@ -22,9 +28,4 @@ export default class LocalContent implements T.ContentProvider {
     return content;
   }
 
-  async getContent() {
-    return this.paths.map(
-      (path) => [path, this.getContentOf(path)] as [string, Promise<string>]
-    );
-  }
 }
