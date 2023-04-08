@@ -2,18 +2,18 @@ import fs from "node:fs";
 import Lexer from "./Lexer/Lexer.js";
 import Tokenizer from "./Lexer/Tokenizer.js";
 import * as T from "../Utils/types.js";
-import PathesManager from
-  "./ContentProviders/LocalContent/FileManager/PathesManager.js";
+import PathsManager from
+  "./ContentProviders/LocalContent/FileManager/PathsManager.js";
 import LocalContent from "./ContentProviders/LocalContent/LocalContent.js";
 
 export default class Engine {
-  private lexer;
-  private pathsManager;
+  private lexer: Lexer;
+  private pathsManager: PathsManager;
 
   constructor(private fileParsers: T.Parsers) {
     this.lexer = new Lexer();
 
-    this.pathsManager = new PathesManager();
+    this.pathsManager = new PathsManager();
   }
 
   async init() {
@@ -49,7 +49,7 @@ export default class Engine {
 
   private async getIndexed() {
     const parsers = Object.keys(this.fileParsers);
-    const paths = await this.pathsManager.getPathes(parsers);
+    const paths = await this.pathsManager.getPaths(parsers);
     const localProvider = new LocalContent(paths, this.fileParsers);
 
     const indexed = await this.lexer.index(localProvider);

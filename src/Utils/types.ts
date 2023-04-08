@@ -3,7 +3,7 @@ import * as fs from "fs";
 export type Tokens = Map<fs.PathLike, Map<string, number>>;
 
 // TODO LocalContent
-export type Pathes = { ext: string[]; content: string[] };
+export type Paths = { ext: string[]; content: string[] };
 
 export interface CacheManager<T> {
   getCache(): Promise<T | null>;

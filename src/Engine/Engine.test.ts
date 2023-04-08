@@ -4,7 +4,7 @@ import Engine from "./Engine.js";
 import fs from "node:fs";
 
 // 2 ways to mock a class
-jest.mock("./Cache/PathesCache.ts");
+jest.mock("./Cache/PathsCache.ts");
 
 jest.mock("./Cache/LexerCache.ts", () =>
   jest.fn().mockImplementation(() => ({
