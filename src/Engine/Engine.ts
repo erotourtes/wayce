@@ -4,7 +4,6 @@ import Tokenizer from "./Lexer/Tokenizer.js";
 import * as T from "../Utils/types.js";
 /* eslint-disable-next-line */
 import PathsManager from "./ContentProviders/LocalContent/FileManager/PathsManager.js";
-import WikiContent from "./ContentProviders/WikiContent/WikiContent.js";
 import LocalContent from "./ContentProviders/LocalContent/LocalContent.js";
 
 export default class Engine {
@@ -12,7 +11,10 @@ export default class Engine {
   private pathsManager: PathsManager;
   private indexed: T.Tokens | null = null;
 
-  constructor(private fileParsers: T.Parsers) {
+  constructor(
+    private fileParsers: T.Parsers,
+    private contentProviders: T.ContentProvider[] = []
+  ) {
     this.lexer = new Lexer();
 
     this.pathsManager = new PathsManager();
@@ -55,12 +57,10 @@ export default class Engine {
     const paths = await this.pathsManager.getPaths(parsers);
     const localProvider = new LocalContent(paths, this.fileParsers);
 
-    const wikiProvider = new WikiContent(
-      ["https://en.wikipedia.org/wiki/Javascript"],
-      2
+    const indexed = await this.lexer.index(
+      localProvider,
+      ...this.contentProviders
     );
-
-    const indexed = await this.lexer.index(localProvider, wikiProvider);
     return indexed;
   }
 
