@@ -1,5 +1,4 @@
 import * as T from "../../../Utils/types.js";
-import { logger } from "../../../Utils/Utils.js";
 
 export default class WikiContent implements T.ContentProvider {
   constructor(private links: string[], private pagesLimit: number) {}
@@ -40,10 +39,5 @@ export default class WikiContent implements T.ContentProvider {
     }
 
     return res;
-  }
-
-  getPaths(): string[] {
-    logger("Warning: getting not all links as crawler gets new links");
-    return this.links;
   }
 }

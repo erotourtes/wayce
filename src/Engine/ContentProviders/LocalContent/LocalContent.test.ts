@@ -14,6 +14,8 @@ describe("LocalContent", () => {
       parsers
     );
 
-    expect(contentProvider.getContent()[0][1]).resolves.toBe("Some symbols\n");
+    expect((await contentProvider.getContent())[0][1]).resolves.toBe(
+      "Some symbols\n"
+    );
   });
 });

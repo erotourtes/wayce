@@ -15,9 +15,7 @@ export type Parsers = {
   [key: string]: (path: fs.PathLike) => Promise<string>;
 };
 
-type Path = string;
+export type Path = string;
 export interface ContentProvider {
   getContent(): Promise<[Path, Promise<string>][]>;
-
-  getPaths(): Path[];
 }

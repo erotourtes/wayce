@@ -19,30 +19,42 @@ export default class Lexer {
     return this.cacheManager.clear();
   }
 
-  async index(contentProvider: T.ContentProvider) {
+  async index(...contentProviders: T.ContentProvider[]) {
     logger("indexing");
 
     const cache = await this.cacheManager.getCache();
-    const allContent =  await contentProvider.getContent();
+    const entries: [T.Path, string][] = [];
+    let shouldIndex = false;
 
-    // TODO isCacheValid
-    const paths = contentProvider.getPaths();
-    const toIndex = paths.filter((path) => !cache?.has(path)).length;
-    if (cache && toIndex === 0) {
-      logger("Reading lexer from cache");
-      this.tokensPerFile = cache;
-      return this.tokensPerFile;
+    for (const contentProvider of contentProviders) {
+      const allContent = await contentProvider.getContent();
+      const paths = allContent.flatMap(([path, _]) => path);
+      const toIndex = paths.filter((path) => !cache?.has(path)).length;
+
+      if (cache && toIndex === 0) {
+        logger("Reading lexer from cache " + contentProviders.constructor.name);
+        continue;
+      }
+
+      logger(`New files: ${toIndex}`);
+
+      const promises = allContent.map(async ([path, contentPromise]) => {
+        const content = await contentPromise;
+        entries.push([path, content]);
+      });
+
+      await Promise.all(promises);
+
+      shouldIndex = true;
     }
 
-    logger(`New files: ${toIndex}`);
-
-    const promises = allContent
-      .map(async ([path, content]) => this.indexContent(path, await content));
-
-    await Promise.all(promises);
-
-    this.applyIDF();
-    await this.cacheManager.save(this.tokensPerFile);
+    if (shouldIndex || !cache) {
+      entries.forEach(([path, content]) => this.indexContent(path, content));
+      this.applyIDF();
+      await this.cacheManager.save(this.tokensPerFile);
+    } else {
+      this.tokensPerFile = cache;
+    }
 
     return this.tokensPerFile;
   }

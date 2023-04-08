@@ -27,8 +27,4 @@ export default class LocalContent implements T.ContentProvider {
       (path) => [path, this.getContentOf(path)] as [string, Promise<string>]
     );
   }
-
-  getPaths() {
-    return this.paths;
-  }
 }
