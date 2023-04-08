@@ -9,12 +9,11 @@ describe("LocalContent", () => {
       ".txt": (path: fs.PathLike) => fs.promises.readFile(path, "utf-8"),
     };
 
-    debugger;
     const contentProvider = new LocalContent(
       [`${process.cwd()}/Test/File1.txt`],
       parsers
     );
 
-    expect(contentProvider.getContent()[0][1]).resolves.toBe("Some symbols");
+    expect(contentProvider.getContent()[0][1]).resolves.toBe("Some symbols\n");
   });
 });
