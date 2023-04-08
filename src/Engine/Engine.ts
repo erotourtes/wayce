@@ -2,20 +2,16 @@ import fs from "node:fs";
 import Lexer from "./Lexer/Lexer.js";
 import Tokenizer from "./Lexer/Tokenizer.js";
 import * as T from "../Utils/types.js";
-import LexerCache from "./Cache/LexerCache.js";
 import PathesManager from
   "./ContentProviders/LocalContent/FileManager/PathesManager.js";
 import LocalContent from "./ContentProviders/LocalContent/LocalContent.js";
 
 export default class Engine {
-  private lexerCache;
   private lexer;
-
   private pathsManager;
 
   constructor(private fileParsers: T.Parsers) {
-    this.lexerCache = new LexerCache();
-    this.lexer = new Lexer(this.lexerCache);
+    this.lexer = new Lexer();
 
     this.pathsManager = new PathesManager();
   }
@@ -43,14 +39,10 @@ export default class Engine {
     return res.slice(0, limit);
   }
 
-  async cleanIndexCache() {
-    this.lexerCache.clear();
-  }
-
   async syncWithFileSystem() {
     return Promise.all([
       this.pathsManager.clearCache(),
-      this.cleanIndexCache(),
+      this.lexer.clearCache(),
       this.search(""),
     ]);
   }

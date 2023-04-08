@@ -15,6 +15,10 @@ export default class Lexer {
     console.log(this.tokensPerFile);
   }
 
+  clearCache() {
+    return this.cacheManager.clear();
+  }
+
   async index(contentProvider: T.ContentProvider) {
     logger("indexing");
 
