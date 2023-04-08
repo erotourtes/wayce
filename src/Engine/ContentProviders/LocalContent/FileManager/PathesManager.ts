@@ -1,8 +1,8 @@
 import fs from "node:fs";
 import FindFiles from "../FileManager/FindFiles.js";
-import { logger } from "../../Utils/Utils.js";
-import * as T from "../../Utils/types.js";
-import PathesCacheManager from "../Cache/PathesCache.js";
+import { logger } from "../../../../Utils/Utils.js";
+import * as T from "../../../../Utils/types.js";
+import PathesCacheManager from "../../../Cache/PathesCache.js";
 
 export default class PathesManager {
   private cache: T.Pathes | null = null;

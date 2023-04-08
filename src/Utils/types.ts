@@ -1,12 +1,8 @@
 import * as fs from "fs";
 
-export interface IFileIO {
-  readFile(path: string): Promise<string>;
-  writeFile(path: string, content: string): Promise<void>;
-}
-
 export type Tokens = Map<fs.PathLike, Map<string, number>>;
 
+// TODO LocalContent
 export type Pathes = { ext: string[]; content: string[] };
 
 export interface CacheManager<T> {
@@ -18,3 +14,10 @@ export interface CacheManager<T> {
 export type Parsers = {
   [key: string]: (path: fs.PathLike) => Promise<string>;
 };
+
+type Path = string;
+export interface ContentProvider {
+  getContent(): [Path, Promise<string>][];
+
+  getPaths(): Path[];
+}

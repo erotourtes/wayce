@@ -11,7 +11,8 @@ const api: { [key: string]: any } = {
     JSON.stringify(await engine.search(query.input, +query.limit)),
   sync: async () => await engine.syncWithFileSystem(),
   open: (query: { path: string }) => {
-    const command = process.platform.includes("win") ? "start" : "xdg-open";
+    // const command = process.platform.includes("win") ? "start" : "xdg-open";
+    const command = "firefox";
     exec(`${command} ${query.path}`);
     return "Done";
   },

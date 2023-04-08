@@ -3,13 +3,11 @@ import { logger } from "../../Utils/Utils.js";
 import * as T from "../../Utils/types.js";
 import Tokenizer from "./Tokenizer.js";
 import LexerCache from "../Cache/LexerCache.js";
-import { extname } from "node:path";
 
 export default class Lexer {
   private tokensPerFile: Map<fs.PathLike, Map<string, number>> = new Map();
 
   constructor(
-    private parsers: T.Parsers,
     private cacheManager: T.CacheManager<T.Tokens> = new LexerCache()
   ) {}
 
@@ -17,46 +15,40 @@ export default class Lexer {
     console.log(this.tokensPerFile);
   }
 
-  async index(files: fs.PathLike[]) {
+  async index(contentProvider: T.ContentProvider) {
     logger("indexing");
 
     const cache = await this.cacheManager.getCache();
-    const toIndex = files.filter((file) => !cache?.has(file)).length;
+    const allContent =  contentProvider.getContent();
 
-    // Every new file causes reindexing
+    // TODO isCacheValid
+    const paths = allContent.flatMap((pair) => pair[0]);
+    const toIndex = paths.filter((path) => !cache?.has(path)).length;
     if (cache && toIndex === 0) {
       logger("Reading lexer from cache");
       this.tokensPerFile = cache;
-    } else {
-      logger(`New files: ${toIndex}`);
-      await this.indexFiles(files);
-
-      this.applyIDF();
-      await this.cacheManager.save(this.tokensPerFile);
+      return this.tokensPerFile;
     }
+
+    logger(`New files: ${toIndex}`);
+
+    const promises = allContent
+      .map(async ([path, content]) => this.indexContent(path, await content));
+
+    await Promise.all(promises);
+
+    this.applyIDF();
+    await this.cacheManager.save(this.tokensPerFile);
 
     return this.tokensPerFile;
   }
 
-  private async indexFiles(files: fs.PathLike[]) {
-    const promises = files.map((file, index) => {
-      logger(`\t--> indexing ${index + 1} / ${files.length} -- ${file}`);
-      return this.indexFile(file);
-    });
-
-    return Promise.all(promises);
-  }
-
-  private async indexFile(file: fs.PathLike): Promise<void> {
-    const content = await this.getContentOf(file);
-
-    // It needed to be here for cache to understand that file is indexed
-    if (!this.tokensPerFile.has(file)) this.tokensPerFile.set(file, new Map());
-    const tokens = this.tokensPerFile.get(file) as Map<string, number>;
-
+  private async indexContent(path: string, content: string): Promise<void> {
+    if (!this.tokensPerFile.has(path)) this.tokensPerFile.set(path, new Map());
     if (!content) return Promise.resolve();
 
     let totalTokens = 0;
+    const tokens = this.tokensPerFile.get(path) as Map<string, number>;
     const iter = new Tokenizer(content);
     for (const token of iter) {
       tokens.set(token, (tokens.get(token) || 0) + 1);
@@ -65,22 +57,7 @@ export default class Lexer {
 
     logger(`\t\t--> total tokens: ${totalTokens} -- applying TF`);
     this.applyTF(totalTokens, tokens);
-    logger(`\t\t--> indexed ${file}`);
-  }
-
-  private async getContentOf(file: fs.PathLike) {
-    const ext = extname(file as string) || "";
-    const parser = this.parsers[ext];
-    if (!parser) {
-      logger(`No parser for ${ext} files`);
-      return Promise.resolve();
-    }
-
-    const content = await parser(file).catch((err) => {
-      logger(err);
-    });
-
-    return content;
+    logger(`\t\t--> indexed ${path}`);
   }
 
   private applyTF(totalWordsCount: number, tokens: Map<string, number>) {
