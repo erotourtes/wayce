@@ -23,7 +23,7 @@ export default class Lexer {
     logger("indexing");
 
     const cache = await this.cacheManager.getCache();
-    const allContent =  contentProvider.getContent();
+    const allContent =  await contentProvider.getContent();
 
     // TODO isCacheValid
     const paths = contentProvider.getPaths();

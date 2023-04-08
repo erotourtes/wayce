@@ -22,7 +22,7 @@ export default class LocalContent implements T.ContentProvider {
     return content;
   }
 
-  getContent() {
+  async getContent() {
     return this.paths.map(
       (path) => [path, this.getContentOf(path)] as [string, Promise<string>]
     );
