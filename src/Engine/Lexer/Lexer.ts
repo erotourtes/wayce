@@ -11,10 +11,6 @@ export default class Lexer {
     private cacheManager: T.CacheManager<T.Tokens> = new LexerCache()
   ) {}
 
-  print() {
-    console.log(this.tokensPerFile);
-  }
-
   clearCache() {
     return this.cacheManager.clear();
   }
@@ -24,31 +20,18 @@ export default class Lexer {
 
     const cache = await this.cacheManager.getCache();
     const entries: [T.Path, string][] = [];
-    let shouldIndex = false;
 
-    for (const contentProvider of contentProviders) {
-      const allContent = await contentProvider.getContent();
-      const paths = allContent.flatMap(([path, _]) => path);
-      const toIndex = paths.filter((path) => !cache?.has(path)).length;
+    await Promise.all(
+      contentProviders.map((contentProvider) =>
+        this.loadContent(contentProvider, entries)
+      )
+    );
 
-      if (cache && toIndex === 0) {
-        logger("Reading lexer from cache " + contentProviders.constructor.name);
-        continue;
-      }
+    const paths = entries.flatMap(([path, _]) => path);
+    const toIndex = paths.filter((path) => !cache?.has(path)).length;
+    logger(`new files to index: ${toIndex}`);
 
-      logger(`New files: ${toIndex}`);
-
-      const promises = allContent.map(async ([path, contentPromise]) => {
-        const content = await contentPromise;
-        entries.push([path, content]);
-      });
-
-      await Promise.all(promises);
-
-      shouldIndex = true;
-    }
-
-    if (shouldIndex || !cache) {
+    if (toIndex > 0 || !cache) {
       entries.forEach(([path, content]) => this.indexContent(path, content));
       this.applyIDF();
       await this.cacheManager.save(this.tokensPerFile);
@@ -59,7 +42,24 @@ export default class Lexer {
     return this.tokensPerFile;
   }
 
-  private async indexContent(path: string, content: string): Promise<void> {
+  private async loadContent(
+    contentProvider: T.ContentProvider,
+    entries: [T.Path, string][]
+  ) {
+    // TODO: think about this
+    const allContent = await contentProvider.getContent();
+    await Promise.all(
+      allContent.map(async ([path, content]) => {
+        try {
+          entries.push([path, await content]);
+        } catch (error) {
+          logger(`Error while reading file: ${path}`);
+        }
+      })
+    );
+  }
+
+  private indexContent(path: string, content: string) {
     if (!this.tokensPerFile.has(path)) this.tokensPerFile.set(path, new Map());
     if (!content) return Promise.resolve();
 

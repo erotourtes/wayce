@@ -2,7 +2,6 @@ import * as fs from "fs";
 
 export type Tokens = Map<fs.PathLike, Map<string, number>>;
 
-// TODO LocalContent
 export type Paths = { ext: string[]; content: string[] };
 
 export interface CacheManager<T> {

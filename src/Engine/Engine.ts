@@ -10,6 +10,7 @@ import LocalContent from "./ContentProviders/LocalContent/LocalContent.js";
 export default class Engine {
   private lexer: Lexer;
   private pathsManager: PathsManager;
+  private indexed: T.Tokens | null = null;
 
   constructor(private fileParsers: T.Parsers) {
     this.lexer = new Lexer();
@@ -23,11 +24,11 @@ export default class Engine {
 
   async search(query: string, limit = 10) {
     const tokens = this.tokensFrom(query);
-    const indexed = await this.getIndexed();
+    if (!this.indexed) this.indexed = await this.getIndexed();
 
     const res: [fs.PathLike, number][] = [];
 
-    for (const [file, fileTokens] of indexed) {
+    for (const [file, fileTokens] of this.indexed) {
       const count = tokens
         .map((token) => fileTokens.get(token) || 0)
         .reduce((val, acc) => val + acc, 0);
@@ -41,6 +42,7 @@ export default class Engine {
   }
 
   async syncWithFileSystem() {
+    this.indexed = null;
     return Promise.all([
       this.pathsManager.clearCache(),
       this.lexer.clearCache(),
@@ -53,7 +55,10 @@ export default class Engine {
     const paths = await this.pathsManager.getPaths(parsers);
     const localProvider = new LocalContent(paths, this.fileParsers);
 
-    const wikiProvider = new WikiContent(["https://en.wikipedia.org/wiki/Javascript"], 10);
+    const wikiProvider = new WikiContent(
+      ["https://en.wikipedia.org/wiki/Javascript"],
+      2
+    );
 
     const indexed = await this.lexer.index(localProvider, wikiProvider);
     return indexed;
