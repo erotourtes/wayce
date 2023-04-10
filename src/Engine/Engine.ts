@@ -1,34 +1,29 @@
 import fs from "node:fs";
 import Lexer from "./Lexer/Lexer.js";
 import Tokenizer from "./Lexer/Tokenizer.js";
-import PathesManager from "./FileManager/PathesManager.js";
 import * as T from "../Utils/types.js";
-import LexerCache from "./Cache/LexerCache.js";
+
+type Provider = T.ContentProvider | T.CachableContentProvider;
 
 export default class Engine {
-  private lexerCache;
-  private lexer;
+  private lexer: Lexer;
+  private indexed: T.Tokens | null = null;
 
-  private pathesManager;
-
-  constructor(private fileParsers: T.Parsers) {
-    this.lexerCache = new LexerCache();
-    this.lexer = new Lexer(this.fileParsers, this.lexerCache);
-
-    this.pathesManager = new PathesManager();
+  constructor(private contentProviders: Provider[]) {
+    this.lexer = new Lexer();
   }
 
   async init() {
-    await this.getIndexed();
+    return this.lexer.index(...this.contentProviders);
   }
 
   async search(query: string, limit = 10) {
     const tokens = this.tokensFrom(query);
-    const indexed = await this.getIndexed();
+    if (!this.indexed) this.indexed = await this.init();
 
     const res: [fs.PathLike, number][] = [];
 
-    for (const [file, fileTokens] of indexed) {
+    for (const [file, fileTokens] of this.indexed) {
       const count = tokens
         .map((token) => fileTokens.get(token) || 0)
         .reduce((val, acc) => val + acc, 0);
@@ -41,23 +36,18 @@ export default class Engine {
     return res.slice(0, limit);
   }
 
-  async cleanIndexCache() {
-    this.lexerCache.clear();
-  }
+  async sync() {
+    const cacheManagers = this.contentProviders.filter((cp) =>
+      T.isCachableContentProvider(cp)
+    ) as T.CachableContentProvider[];
+    const clearings = [
+      ...cacheManagers.map((cp) => cp.clearCache()),
+      this.lexer.clearCache(),
+    ];
+    await Promise.all(clearings);
 
-  async syncWithFileSystem() {
-    return Promise.all([
-      this.pathesManager.clearCache(),
-      this.cleanIndexCache(),
-      this.search(""),
-    ]);
-  }
-
-  private async getIndexed() {
-    const parsers = Object.keys(this.fileParsers);
-    const pathes = await this.pathesManager.getPathes(parsers);
-    const indexed = await this.lexer.index(pathes);
-    return indexed;
+    this.indexed = null;
+    return this.init();
   }
 
   private tokensFrom = (query: string) => {

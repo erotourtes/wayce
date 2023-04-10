@@ -4,20 +4,28 @@ import engineFactory from "../Engine/EngineFactory.js";
 import { exec } from "node:child_process";
 
 const engine = engineFactory();
-await engine.init();
 
 const api: { [key: string]: any } = {
   search: async (query: { input: string; limit: string }) =>
     JSON.stringify(await engine.search(query.input, +query.limit)),
-  sync: async () => await engine.syncWithFileSystem(),
+  sync: async () => await engine.sync(),
   open: (query: { path: string }) => {
-    const command = process.platform.includes("win") ? "start" : "xdg-open";
+    const forFiles = process.platform.includes("win") ?
+      "start" :
+      "xdg-open";
+    const forLinks = "firefox";
+    const command = query.path.startsWith("http") ? forLinks : forFiles;
+
     exec(`${command} ${query.path}`);
     return "Done";
   },
 };
 
-export default async function handleApi(
+export async function init() {
+  await engine.init();
+}
+
+export async function handleApi(
   req: http.IncomingMessage,
   res: http.ServerResponse
 ) {

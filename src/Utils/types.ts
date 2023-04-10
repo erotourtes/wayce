@@ -1,13 +1,8 @@
 import * as fs from "fs";
 
-export interface IFileIO {
-  readFile(path: string): Promise<string>;
-  writeFile(path: string, content: string): Promise<void>;
-}
-
 export type Tokens = Map<fs.PathLike, Map<string, number>>;
 
-export type Pathes = { ext: string[]; content: string[] };
+export type Paths = { ext: string[]; content: string[] };
 
 export interface CacheManager<T> {
   getCache(): Promise<T | null>;
@@ -18,3 +13,18 @@ export interface CacheManager<T> {
 export type Parsers = {
   [key: string]: (path: fs.PathLike) => Promise<string>;
 };
+
+export type Path = string;
+export interface ContentProvider {
+  getContent(): Promise<[Path, Promise<string>][]>;
+}
+
+export interface CachableContentProvider extends ContentProvider {
+  clearCache(): Promise<void>;
+}
+
+export function isCachableContentProvider(
+  cp: ContentProvider
+): cp is CachableContentProvider {
+  return "clearCache" in cp;
+}

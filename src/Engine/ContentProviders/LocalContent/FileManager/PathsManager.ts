@@ -1,33 +1,33 @@
 import fs from "node:fs";
 import FindFiles from "../FileManager/FindFiles.js";
-import { logger } from "../../Utils/Utils.js";
-import * as T from "../../Utils/types.js";
-import PathesCacheManager from "../Cache/PathesCache.js";
+import { logger } from "../../../../Utils/Utils.js";
+import * as T from "../../../../Utils/types.js";
+import PathsCacheManager from "../../../Cache/PathsCache.js";
 
-export default class PathesManager {
-  private cache: T.Pathes | null = null;
+export default class PathsManager {
+  private cache: T.Paths | null = null;
   private startPath = process.env["--start-path"] as string;
 
   constructor(
-    private cacheManager: T.CacheManager<T.Pathes> = new PathesCacheManager()
+    private cacheManager: T.CacheManager<T.Paths> = new PathsCacheManager()
   ) {}
 
-  async getPathes(extensions: string[]) {
+  async getPaths(extensions: string[]) {
     if (this.cache) return this.cache.content;
 
     this.cache = await this.cacheManager.getCache();
-    logger(`pathes cache: ${this.cache?.content.length || 0}`);
+    logger(`paths cache: ${this.cache?.content.length || 0}`);
 
-    const newPathes = await this.findNew(extensions);
+    const newPaths = await this.findNew(extensions);
 
-    if (newPathes.length > 0) {
-      logger("New pathes found");
+    if (newPaths.length > 0) {
+      logger("New paths found");
       this.cache = {
         ext: extensions,
-        content: [...(this.cache?.content || []), ...newPathes],
+        content: [...(this.cache?.content || []), ...newPaths],
       };
 
-      logger("Writing to cache");
+      logger("Saving paths to cache");
       this.cacheManager.save(this.cache);
     }
 
@@ -47,7 +47,7 @@ export default class PathesManager {
   private async findNew(extensions: string[]) {
     const newExtensions = extensions.filter((ext) => this.filterFounded(ext));
     logger(`newExtensions: ${newExtensions}`);
-    return this.findPathes(newExtensions);
+    return this.findPaths(newExtensions);
   }
 
   private filterFounded(extension: string) {
@@ -55,7 +55,7 @@ export default class PathesManager {
     return !this.cache.ext.includes(extension);
   }
 
-  private async findPathes(extensions: string[]) {
+  private async findPaths(extensions: string[]) {
     logger("Searching files");
     const finder = new FindFiles(extensions);
     return (await finder.find(this.startPath)).filter(this.filterLargeFiles);

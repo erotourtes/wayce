@@ -1,9 +1,10 @@
 import http from "node:http";
-import handleApi from "./handleApi.js";
+import { init, handleApi } from "./handleApi.js";
 import serveStatic from "./serveStatic.js";
 import { logger } from "../Utils/Utils.js";
 
-export default function startServer(port: number) {
+export default async function startServer(port: number) {
+  await init();
 
   const isStatic = (url: string) => url === "/" || url?.includes(".");
   const isApi = (url: string) => url?.startsWith("/api");

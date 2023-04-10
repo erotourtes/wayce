@@ -11,7 +11,7 @@ const args = process.argv.slice(2);
 const defaults: { [key: string]: string } = {
   "--env": NODE_ENV.development,
   "--start-path": `${os.homedir()}`,
-  "--pathes-cache": `${os.tmpdir()}/wayce_pathes.txt`,
+  "--paths-cache": `${os.tmpdir()}/wayce_paths.txt`,
   "--engine-cache": `${os.tmpdir()}/wayce_engine.txt`,
   "--max-file-size": Number(10 ** 6).toString(),
   "--cli": "false",
