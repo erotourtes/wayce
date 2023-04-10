@@ -8,7 +8,7 @@ const engine = engineFactory();
 const api: { [key: string]: any } = {
   search: async (query: { input: string; limit: string }) =>
     JSON.stringify(await engine.search(query.input, +query.limit)),
-  sync: async () => await engine.syncWithFileSystem(),
+  sync: async () => await engine.sync(),
   open: (query: { path: string }) => {
     const forFiles = process.platform.includes("win") ?
       "start" :

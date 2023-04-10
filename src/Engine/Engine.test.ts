@@ -1,15 +1,20 @@
 import { expect, it, describe } from "@jest/globals";
 import { NODE_ENV } from "../config.js";
 import Engine from "./Engine.js";
+import LocalContent from "./ContentProviders/LocalContent/LocalContent.js";
 import fs from "node:fs";
 
-// 2 ways to mock a class
 jest.mock("./Cache/PathsCache.ts");
-
-jest.mock("./Cache/LexerCache.ts", () =>
+jest.mock("./Cache/LexerCache.ts");
+jest.mock("./ContentProviders/LocalContent/FileManager/PathsManager.ts", () =>
   jest.fn().mockImplementation(() => ({
-    getCache: jest.fn().mockResolvedValue(null),
-    save: jest.fn().mockResolvedValue(null),
+    getPaths: jest
+      .fn()
+      .mockResolvedValue([
+        `${process.cwd()}/Test/File1.txt`,
+        `${process.cwd()}/Test/File2.txt`,
+        `${process.cwd()}/Test/File3.txt`,
+      ]),
   }))
 );
 
@@ -17,9 +22,10 @@ process.env["--env"] = NODE_ENV.test;
 process.env["--start-path"] = `${process.cwd()}/./Test/`;
 process.env["--max-file-size"] = "0";
 
-const engine = new Engine({
+const localProvider = new LocalContent({
   ".txt": (path) => fs.promises.readFile(path, "utf-8"),
 });
+const engine = new Engine([localProvider]);
 
 describe("Engine", () => {
   it("should find File3", async () => {

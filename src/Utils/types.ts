@@ -18,3 +18,13 @@ export type Path = string;
 export interface ContentProvider {
   getContent(): Promise<[Path, Promise<string>][]>;
 }
+
+export interface CachableContentProvider extends ContentProvider {
+  clearCache(): Promise<void>;
+}
+
+export function isCachableContentProvider(
+  cp: ContentProvider
+): cp is CachableContentProvider {
+  return "clearCache" in cp;
+}

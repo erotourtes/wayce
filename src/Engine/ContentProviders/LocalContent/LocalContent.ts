@@ -2,14 +2,29 @@ import * as T from "../../../Utils/types.js";
 import fs from "node:fs";
 import { logger } from "../../../Utils/Utils.js";
 import { extname } from "node:path";
+import PathsManager from "./FileManager/PathsManager.js";
 
-export default class LocalContent implements T.ContentProvider {
-  constructor(private paths: string[], private parsers: T.Parsers) {}
+export default class LocalContent implements T.CachableContentProvider {
+  constructor(
+    private parsers: T.Parsers,
+    private pathsManager = new PathsManager()
+  ) {}
+
+  clearCache() {
+    return this.pathsManager.clearCache();
+  }
 
   async getContent() {
-    return this.paths.map(
+    const paths = await this.getPaths();
+    return paths.map(
       (path) => [path, this.getContentOf(path)] as [string, Promise<string>]
     );
+  }
+
+  private async getPaths() {
+    const parsers = Object.keys(this.parsers);
+    const paths = await this.pathsManager.getPaths(parsers);
+    return paths;
   }
 
   private getContentOf(path: fs.PathLike) {
@@ -27,5 +42,4 @@ export default class LocalContent implements T.ContentProvider {
 
     return content;
   }
-
 }

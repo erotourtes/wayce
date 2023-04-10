@@ -2,31 +2,24 @@ import fs from "node:fs";
 import Lexer from "./Lexer/Lexer.js";
 import Tokenizer from "./Lexer/Tokenizer.js";
 import * as T from "../Utils/types.js";
-/* eslint-disable-next-line */
-import PathsManager from "./ContentProviders/LocalContent/FileManager/PathsManager.js";
-import LocalContent from "./ContentProviders/LocalContent/LocalContent.js";
+
+type Provider = T.ContentProvider | T.CachableContentProvider;
 
 export default class Engine {
   private lexer: Lexer;
-  private pathsManager: PathsManager;
   private indexed: T.Tokens | null = null;
 
-  constructor(
-    private fileParsers: T.Parsers,
-    private contentProviders: T.ContentProvider[] = []
-  ) {
+  constructor(private contentProviders: Provider[]) {
     this.lexer = new Lexer();
-
-    this.pathsManager = new PathsManager();
   }
 
   async init() {
-    await this.getIndexed();
+    return this.lexer.index(...this.contentProviders);
   }
 
   async search(query: string, limit = 10) {
     const tokens = this.tokensFrom(query);
-    if (!this.indexed) this.indexed = await this.getIndexed();
+    if (!this.indexed) this.indexed = await this.init();
 
     const res: [fs.PathLike, number][] = [];
 
@@ -43,24 +36,18 @@ export default class Engine {
     return res.slice(0, limit);
   }
 
-  async syncWithFileSystem() {
-    this.indexed = null;
-    return Promise.all([
-      this.pathsManager.clearCache(),
+  async sync() {
+    const cacheManagers = this.contentProviders.filter((cp) =>
+      T.isCachableContentProvider(cp)
+    ) as T.CachableContentProvider[];
+    const clearings = [
+      ...cacheManagers.map((cp) => cp.clearCache()),
       this.lexer.clearCache(),
-      this.init(),
-    ]);
-  }
+    ];
+    await Promise.all(clearings);
 
-  private async getIndexed() {
-    const parsers = Object.keys(this.fileParsers);
-    const paths = await this.pathsManager.getPaths(parsers);
-    const localProvider = new LocalContent(paths, this.fileParsers);
-
-    return await this.lexer.index(
-      localProvider,
-      ...this.contentProviders
-    );
+    this.indexed = null;
+    return this.init();
   }
 
   private tokensFrom = (query: string) => {
