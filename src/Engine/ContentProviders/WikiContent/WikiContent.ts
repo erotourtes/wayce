@@ -12,7 +12,7 @@ export default class WikiContent implements T.ContentProvider {
 
     // TODO: use async generator?
     let curLink = 0;
-    while (this.pagesLimit > 0 && curLink < this.links.length) {
+    while (this.pagesLimit > curLink && curLink < this.links.length) {
       const link = this.links[curLink++] as string;
       if (this.visited.has(link)) continue;
       this.visited.add(link);
@@ -27,7 +27,6 @@ export default class WikiContent implements T.ContentProvider {
       if (links) this.links.push(...links);
 
       res.push([link, Promise.resolve(html)]);
-      this.pagesLimit--;
     }
 
     return res;
