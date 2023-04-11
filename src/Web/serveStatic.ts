@@ -6,7 +6,7 @@ const mimeTypes: { [key: string] : string } = {
   ".html": "text/html",
   ".js": "text/javascript",
   ".css": "text/css",
-  ".svg": "application/image/svg+xml",
+  ".svg": "image/svg+xml",
   ".json": "application/json",
   ".ico": "image/x-icon",
   // ".png": "image/png",
