@@ -6,12 +6,10 @@ import * as T from "../Utils/types.js";
 type Provider = T.ContentProvider | T.CachableContentProvider;
 
 export default class Engine {
-  private lexer: Lexer;
+  private lexer = new Lexer();
   private indexed: T.Tokens | null = null;
 
-  constructor(private contentProviders: Provider[]) {
-    this.lexer = new Lexer();
-  }
+  constructor(private contentProviders: Provider[]) {}
 
   async init() {
     return this.lexer.index(...this.contentProviders);
