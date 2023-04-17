@@ -13,7 +13,7 @@ export default class Tokenizer implements IterableIterator<string> {
   }
 
   next(): IteratorResult<string> {
-    const token = this.nextToken();
+    const token = this.nextToken().toLowerCase();
 
     return {
       done: this.fileChars.size <= 0 && token.length === 0,
