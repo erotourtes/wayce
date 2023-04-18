@@ -35,11 +35,11 @@ export default class Engine {
   }
 
   async sync() {
-    const cacheManagers = this.contentProviders.filter((cp) =>
+    const cachable = this.contentProviders.filter((cp) =>
       T.isCachableContentProvider(cp)
     ) as T.CachableContentProvider[];
     const clearings = [
-      ...cacheManagers.map((cp) => cp.clearCache()),
+      ...cachable.map((cp) => cp.clearCache()),
       this.lexer.clearCache(),
     ];
     await Promise.all(clearings);

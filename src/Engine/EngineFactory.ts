@@ -15,6 +15,7 @@ const localProvider = new LocalContent(fileParsers);
 
 const baseUrl = "https://en.wikipedia.org/wiki/Javascript";
 const wikiProvider = new WikiContent([baseUrl], 2);
+await wikiProvider.init();
 
 export default function engineFactory() {
   return new Engine([wikiProvider, localProvider]);
