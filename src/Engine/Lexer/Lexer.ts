@@ -25,7 +25,8 @@ export default class Lexer {
 
     if (toIndex > 0 || !cache) {
       const entries = await this.getAllContent(contentProviders);
-      entries.forEach(([path, content]) => this.indexContent(path, content));
+      for (const [path, content] of entries)
+        this.indexContent(path, content);
 
       this.applyIDF();
       await this.cacheManager.save(this.tokensPerFile);
