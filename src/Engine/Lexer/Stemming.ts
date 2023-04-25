@@ -7,8 +7,6 @@ The purpose of the stemming algorithm is
 to reduce the inflected words down to their word stem
 
 it is sufficient that related words map to the same stem.
-
-TODO refactor
 */
 
 const vowels = ["a", "e", "i", "o", "u"];
