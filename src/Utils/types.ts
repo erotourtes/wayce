@@ -29,3 +29,13 @@ export function isCachableContentProvider(
 ): cp is CachableContentProvider {
   return "clearCache" in cp;
 }
+
+export type Config = {
+  env: "development" | "production" | "test";
+  startPath: string;
+  pathsCache: string;
+  engineCache: string;
+  maxFileSize: number;
+  port: number;
+}
+

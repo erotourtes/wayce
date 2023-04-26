@@ -1,7 +1,5 @@
 import "./config.js";
 import startServer from "./Web/server.js";
+import config from "./config.js";
 
-const env = process.env;
-
-if (env["--cli"] === "true") console.log("CLI is not implemented yet");
-else startServer(3000);
+startServer(config.port);

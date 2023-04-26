@@ -1,27 +1,17 @@
 import os from "node:os";
+import { Config } from "./Utils/types.js";
+import { getConfigOf } from "./Utils/Utils.js";
 
-export enum NODE_ENV {
-  development = "development",
-  production = "production",
-  test = "test",
-}
-
-const args = process.argv.slice(2);
-
-const defaults: { [key: string]: string } = {
-  "--env": NODE_ENV.development,
-  "--start-path": `${os.homedir()}`,
-  "--paths-cache": `${os.tmpdir()}/wayce_paths.txt`,
-  "--engine-cache": `${os.tmpdir()}/wayce_engine.txt`,
-  "--max-file-size": Number(10 ** 6).toString(),
-  "--cli": "false",
+const defaults: Config = {
+  env: "development",
+  startPath: `${os.homedir()}`,
+  pathsCache: `${os.tmpdir()}/wayce_paths.txt`,
+  engineCache: `${os.tmpdir()}/wayce_engine.txt`,
+  maxFileSize: 10 ** 6,
+  port: 3000,
 };
 
-for (const arg of args) {
-  const [key, value] = arg.split("=");
+const args = process.argv.slice(2);
+const config = getConfigOf(defaults, args);
 
-  if (defaults[key])
-    defaults[key] = value ? value : "true";
-}
-
-for (const key in defaults) process.env[key] = defaults[key];
+export default config;

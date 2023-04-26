@@ -1,8 +1,8 @@
 import { expect, it, describe } from "@jest/globals";
-import { NODE_ENV } from "../config.js";
 import Engine from "./Engine.js";
 import LocalContent from "./ContentProviders/LocalContent/LocalContent.js";
 import fs from "node:fs";
+import config from "../config.js";
 
 jest.mock("./Cache/PathsCache.ts");
 jest.mock("./Cache/LexerCache.ts");
@@ -18,9 +18,9 @@ jest.mock("./ContentProviders/LocalContent/FileManager/PathsManager.ts", () =>
   }))
 );
 
-process.env["--env"] = NODE_ENV.test;
-process.env["--start-path"] = `${process.cwd()}/./Test/`;
-process.env["--max-file-size"] = "0";
+config.env = "test";
+config.startPath = `${process.cwd()}/./Test/`;
+config.maxFileSize = 0;
 
 const localProvider = new LocalContent({
   ".txt": (path) => fs.promises.readFile(path, "utf-8"),

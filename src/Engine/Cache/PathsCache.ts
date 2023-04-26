@@ -2,9 +2,10 @@ import fs from "node:fs";
 import * as T from "../../Utils/types.js";
 import { logger } from "../../Utils/Utils.js";
 import os from "node:os";
+import config from "../../config.js";
 
 export default class PathsCache implements T.CacheManager<T.Paths> {
-  private TMP_PATH = process.env["--paths-cache"] as string;
+  private TMP_PATH = config.pathsCache;
 
   async getCache() {
     try {

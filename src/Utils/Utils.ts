@@ -1,4 +1,5 @@
-import { NODE_ENV } from "../config.js";
+import config from "../config.js";
+import * as T from "./types.js";
 
 export function isLetter(ch: string): boolean {
   return !ch ? false : ch.toLowerCase() !== ch.toUpperCase();
@@ -9,8 +10,8 @@ export function isDigit(ch: string): boolean {
 }
 
 export function logger(message: string | string[] | Error) {
-  const env = process.env["--env"];
-  if (env === NODE_ENV.test || env === NODE_ENV.production) return;
+  const env = config.env;
+  if (env === "test" || env === "production") return;
 
   if (message instanceof Error) {
     console.error(message);
@@ -80,3 +81,28 @@ export class Queue<T> {
     return list;
   }
 }
+
+export const getConfigOf = (defaults: T.Config, args: string[]): T.Config => {
+  const parser = {
+    number: (value: string) => Number(value),
+    string: (value: string) => value,
+  };
+
+  const options: Partial<T.Config> = {};
+  for (const arg of args) {
+    const [key, value] = arg.split("=");
+    // makes from --option-name -> optionName
+    const optionName = key
+      .substring(2)
+      .replace(/-([a-z])/g, (_, match) =>
+        match.toUpperCase()
+      ) as keyof T.Config;
+
+    if (!defaults[optionName]) throw new Error(`Unknown option: ${key}`);
+
+    const type = typeof defaults[optionName] as keyof typeof parser;
+    options[optionName]! = parser[type](value) as never;
+  }
+
+  return { ...defaults, ...options } as T.Config;
+};
