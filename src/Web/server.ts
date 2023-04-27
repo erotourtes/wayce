@@ -29,6 +29,6 @@ export default async function startServer(port: number) {
   server.listen(port);
 
   server.on("error", (err) => {
-    console.log(err.message);
+    logger(err.message);
   });
 }

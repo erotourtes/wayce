@@ -1,25 +1,15 @@
-import PDFParser from "pdf2json";
+import pdfjsLib from "pdfjs-dist";
 
-export default class PDF {
-  private pdfParser = new PDFParser({}, 1);
-  private content = "";
+export default async function loadPdf(url: string): Promise<string> {
+  const pdf = await pdfjsLib.getDocument(url).promise;
+  const numOfpages = pdf.numPages;
+  let text = "";
 
-  async load(url: string): Promise<string> {
-    return new Promise((res, rej) => {
-      this.pdfParser.on("pdfParser_dataError", (errData) =>
-        rej(new Error(errData.parserError))
-      );
-
-      this.pdfParser.on("pdfParser_dataReady", () => {
-        this.content = this.pdfParser.getRawTextContent();
-        res(this.content);
-      });
-
-      this.pdfParser.loadPDF(url);
-    });
+  for (let i = 1; i <= numOfpages; i++) {
+    const page = await pdf.getPage(i);
+    const content = await page.getTextContent();
+    text += content.items.map((item: any) => item.str).join(" ");
   }
 
-  getContent() {
-    return this.content;
-  }
+  return text;
 }

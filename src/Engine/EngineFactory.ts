@@ -5,11 +5,11 @@ import fs from "node:fs";
 import WikiContent from "./ContentProviders/WikiContent/WikiContent.js";
 import LocalContent from "./ContentProviders/LocalContent/LocalContent.js";
 
-import PDF from "../Parsers/Pdf/pdf.js";
+import loadPdf from "../Parsers/Pdf/pdf.js";
 
 const fileParsers: T.Parsers = {
   // ".md": (path: fs.PathLike) => fs.promises.readFile(path, "utf-8"),
-  ".pdf": (path) => new PDF().load(path as string),
+  ".pdf": (path) => loadPdf(path as string),
 };
 const localProvider = new LocalContent(fileParsers);
 
