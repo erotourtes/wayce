@@ -81,28 +81,3 @@ export class Queue<T> {
     return list;
   }
 }
-
-export const getConfigOf = (defaults: T.Config, args: string[]): T.Config => {
-  const parser = {
-    number: (value: string) => Number(value),
-    string: (value: string) => value,
-  };
-
-  const options: Partial<T.Config> = {};
-  for (const arg of args) {
-    const [key, value] = arg.split("=");
-    // makes from --option-name -> optionName
-    const optionName = key
-      .substring(2)
-      .replace(/-([a-z])/g, (_, match) =>
-        match.toUpperCase()
-      ) as keyof T.Config;
-
-    if (!defaults[optionName]) throw new Error(`Unknown option: ${key}`);
-
-    const type = typeof defaults[optionName] as keyof typeof parser;
-    options[optionName]! = parser[type](value) as never;
-  }
-
-  return { ...defaults, ...options } as T.Config;
-};

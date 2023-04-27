@@ -1,6 +1,32 @@
 import os from "node:os";
 import { Config } from "./Utils/types.js";
-import { getConfigOf } from "./Utils/Utils.js";
+
+const getConfigOf = (defaults: Config, args: string[]): Config => {
+  const parser = {
+    number: (value: string) => Number(value),
+    string: (value: string) => value,
+  };
+
+  const options: Partial<Config> = {};
+  for (const arg of args) {
+    if (!arg.startsWith("--")) continue;
+
+    const [key, value] = arg.split("=");
+    // makes from --option-name -> optionName
+    const optionName = key
+      .substring(2)
+      .replace(/-([a-z])/g, (_, match) =>
+        match.toUpperCase()
+      ) as keyof Config;
+
+    if (!defaults[optionName]) throw new Error(`Unknown option: ${key}`);
+
+    const type = typeof defaults[optionName] as keyof typeof parser;
+    options[optionName]! = parser[type](value) as never;
+  }
+
+  return { ...defaults, ...options } as Config;
+};
 
 const defaults: Config = {
   env: "development",
