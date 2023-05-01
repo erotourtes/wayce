@@ -6,10 +6,9 @@ export default class WikiContent implements T.ContentProvider {
 
   private readonly baseUrl = "https://www.wikipedia.org";
   private visited: Set<string> = new Set();
+  private content: [string, Promise<string>][] = [];
 
-  async getContent() {
-    const res: [string, Promise<string>][] = [];
-
+  async init() {
     // TODO: use async generator?
     let curLink = 0;
     while (this.pagesLimit > curLink && curLink < this.links.length) {
@@ -26,10 +25,18 @@ export default class WikiContent implements T.ContentProvider {
       const links = this.getLinksOf(html);
       if (links) this.links.push(...links);
 
-      res.push([link, Promise.resolve(html)]);
+      this.content.push([link, Promise.resolve(html)]);
     }
+  }
 
-    return res;
+  async getPaths(): Promise<string[]> {
+    return this.links.slice(0, this.pagesLimit);
+  }
+
+  async getContent() {
+    if (!this.content.length) throw new Error("WikiContent not initialized");
+
+    return this.content;
   }
 
   private async getContentOf(link: string): Promise<string> {
@@ -45,5 +52,4 @@ export default class WikiContent implements T.ContentProvider {
       ?.filter((href) => !href.includes(":"))
       .map((href) => this.baseUrl + href.replace(/href="/, ""));
   }
-
 }

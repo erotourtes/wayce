@@ -1,9 +1,10 @@
 import fs from "node:fs";
 import * as T from "../../Utils/types.js";
 import { logger } from "../../Utils/Utils.js";
+import config from "../../config.js";
 
 export default class LexerCache implements T.CacheManager<T.Tokens> {
-  private PATH = process.env["--engine-cache"] as string;
+  private PATH = config.engineCache;
 
   async getCache() {
     try {

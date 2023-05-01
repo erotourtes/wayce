@@ -19,20 +19,15 @@ export default class Lexer {
     logger("indexing");
 
     const cache = await this.cacheManager.getCache();
-    const entries: [T.Path, string][] = [];
-
-    await Promise.all(
-      contentProviders.map((contentProvider) =>
-        this.loadContent(contentProvider, entries)
-      )
-    );
-
-    const paths = entries.flatMap(([path, _]) => path);
+    const paths = await this.getAllPaths(contentProviders);
     const toIndex = paths.filter((path) => !cache?.has(path)).length;
     logger(`new files to index: ${toIndex}`);
 
     if (toIndex > 0 || !cache) {
-      entries.forEach(([path, content]) => this.indexContent(path, content));
+      const entries = await this.getAllContent(contentProviders);
+      for (const [path, content] of entries)
+        this.indexContent(path, content);
+
       this.applyIDF();
       await this.cacheManager.save(this.tokensPerFile);
     } else {
@@ -42,18 +37,31 @@ export default class Lexer {
     return this.tokensPerFile;
   }
 
+  private async getAllPaths(providers: T.ContentProvider[]) {
+    return (await Promise.all(providers.map((cp) => cp.getPaths()))).flat();
+  }
+
+  private async getAllContent(
+    providers: T.ContentProvider[]
+  ): Promise<[T.Path, string][]> {
+    return (
+      await Promise.all(
+        providers.map((contentProvider) => this.loadContent(contentProvider))
+      )
+    ).flat();
+  }
+
   private async loadContent(
-    contentProvider: T.ContentProvider,
-    entries: [T.Path, string][]
-  ) {
-    // TODO: think about this
-    const allContent = await contentProvider.getContent();
-    await Promise.all(
-      allContent.map(async ([path, content]) => {
+    contentProvider: T.ContentProvider
+  ): Promise<[T.Path, string][]> {
+    const content = await contentProvider.getContent();
+    return await Promise.all(
+      content.map(async ([path, content]) => {
         try {
-          entries.push([path, await content]);
+          return [path, await content];
         } catch (error) {
           logger(`Error while reading file: ${path}`);
+          return [path, ""];
         }
       })
     );

@@ -1,27 +1,43 @@
 import os from "node:os";
+import { Config } from "./Utils/types.js";
 
-export enum NODE_ENV {
-  development = "development",
-  production = "production",
-  test = "test",
-}
+const getConfigOf = (defaults: Config, args: string[]): Config => {
+  const parser = {
+    number: (value: string) => Number(value),
+    string: (value: string) => value,
+  };
 
-const args = process.argv.slice(2);
+  const options: Partial<Config> = {};
+  for (const arg of args) {
+    if (!arg.startsWith("--")) continue;
 
-const defaults: { [key: string]: string } = {
-  "--env": NODE_ENV.development,
-  "--start-path": `${os.homedir()}`,
-  "--paths-cache": `${os.tmpdir()}/wayce_paths.txt`,
-  "--engine-cache": `${os.tmpdir()}/wayce_engine.txt`,
-  "--max-file-size": Number(10 ** 6).toString(),
-  "--cli": "false",
+    const [key, value] = arg.split("=");
+    // makes from --option-name -> optionName
+    const optionName = key
+      .substring(2)
+      .replace(/-([a-z])/g, (_, match) =>
+        match.toUpperCase()
+      ) as keyof Config;
+
+    if (!defaults[optionName]) throw new Error(`Unknown option: ${key}`);
+
+    const type = typeof defaults[optionName] as keyof typeof parser;
+    options[optionName]! = parser[type](value) as never;
+  }
+
+  return { ...defaults, ...options } as Config;
 };
 
-for (const arg of args) {
-  const [key, value] = arg.split("=");
+const defaults: Config = {
+  env: "development",
+  startPath: `${os.homedir()}`,
+  pathsCache: `${os.tmpdir()}/wayce_paths.txt`,
+  engineCache: `${os.tmpdir()}/wayce_engine.txt`,
+  maxFileSize: 10 ** 6,
+  port: 3000,
+};
 
-  if (defaults[key])
-    defaults[key] = value ? value : "true";
-}
+const args = process.argv.slice(2);
+const config = getConfigOf(defaults, args);
 
-for (const key in defaults) process.env[key] = defaults[key];
+export default config;

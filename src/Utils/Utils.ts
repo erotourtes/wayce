@@ -1,4 +1,5 @@
-import { NODE_ENV } from "../config.js";
+import config from "../config.js";
+import * as T from "./types.js";
 
 export function isLetter(ch: string): boolean {
   return !ch ? false : ch.toLowerCase() !== ch.toUpperCase();
@@ -9,8 +10,8 @@ export function isDigit(ch: string): boolean {
 }
 
 export function logger(message: string | string[] | Error) {
-  const env = process.env["--env"];
-  if (env === NODE_ENV.test || env === NODE_ENV.production) return;
+  const env = config.env;
+  if (env === "test" || env === "production") return;
 
   if (message instanceof Error) {
     console.error(message);

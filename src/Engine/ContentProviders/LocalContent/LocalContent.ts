@@ -21,7 +21,7 @@ export default class LocalContent implements T.CachableContentProvider {
     );
   }
 
-  private async getPaths() {
+  public async getPaths() {
     const parsers = Object.keys(this.parsers);
     const paths = await this.pathsManager.getPaths(parsers);
     return paths;

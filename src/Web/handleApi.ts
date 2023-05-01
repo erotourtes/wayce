@@ -15,8 +15,9 @@ const api: { [key: string]: any } = {
       "xdg-open";
     const forLinks = "firefox";
     const command = query.path.startsWith("http") ? forLinks : forFiles;
+    const path = query.path.replaceAll(" ", "\\ ");
 
-    exec(`${command} ${query.path}`);
+    exec(`${command} ${path}`);
     return "Done";
   },
 };

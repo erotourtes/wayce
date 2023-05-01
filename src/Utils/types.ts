@@ -17,6 +17,7 @@ export type Parsers = {
 export type Path = string;
 export interface ContentProvider {
   getContent(): Promise<[Path, Promise<string>][]>;
+  getPaths(): Promise<string[]>;
 }
 
 export interface CachableContentProvider extends ContentProvider {
@@ -28,3 +29,13 @@ export function isCachableContentProvider(
 ): cp is CachableContentProvider {
   return "clearCache" in cp;
 }
+
+export type Config = {
+  env: "development" | "production" | "test";
+  startPath: string;
+  pathsCache: string;
+  engineCache: string;
+  maxFileSize: number;
+  port: number;
+}
+

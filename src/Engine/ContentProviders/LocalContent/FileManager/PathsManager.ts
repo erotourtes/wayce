@@ -3,10 +3,11 @@ import FindFiles from "../FileManager/FindFiles.js";
 import { logger } from "../../../../Utils/Utils.js";
 import * as T from "../../../../Utils/types.js";
 import PathsCacheManager from "../../../Cache/PathsCache.js";
+import config from "../../../../config.js";
 
 export default class PathsManager {
   private cache: T.Paths | null = null;
-  private startPath = process.env["--start-path"] as string;
+  private startPath = config.startPath;
 
   constructor(
     private cacheManager: T.CacheManager<T.Paths> = new PathsCacheManager()
@@ -63,9 +64,9 @@ export default class PathsManager {
 
   private filterLargeFiles(path: string) {
     const size = fs.statSync(path).size;
-    const maxSize = parseInt(process.env["--max-file-size"] as string);
+    const maxSize = config.maxFileSize;
 
-    if (isNaN(maxSize)) throw new Error("--max-file-size is not a number");
+    if (isNaN(maxSize)) throw new Error("Max file size is not a number");
     if (maxSize === 0) return true;
 
     return size < maxSize;

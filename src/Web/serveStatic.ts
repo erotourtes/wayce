@@ -9,15 +9,6 @@ const mimeTypes: { [key: string] : string } = {
   ".svg": "image/svg+xml",
   ".json": "application/json",
   ".ico": "image/x-icon",
-  // ".png": "image/png",
-  // ".jpg": "image/jpg",
-  // ".gif": "image/gif",
-  // ".wav": "audio/wav",
-  // ".mp4": "video/mp4",
-  // ".woff": "application/font-woff",
-  // ".ttf": "application/font-ttf",
-  // ".eot": "application/vnd.ms-fontobject",
-  // ".otf": "application/font-otf",
 };
 
 export default async function serveStatic(

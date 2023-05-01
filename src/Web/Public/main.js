@@ -1,22 +1,5 @@
 /* eslint-disable */
 
-// const searchDebounce = ((delay) => {
-//   let canSearch = true;
-//   let timeout;
-//
-//   const debounce = (value) => {
-//     canSearch = false;
-//     if (timeout) clearTimeout(timeout);
-//     timeout = setTimeout(() => {
-//       console.log("done");
-//       canSearch = true;
-//     }, delay);
-//   };
-//
-//   return debounce;
-// })(500);
-// let canSearch = true;
-
 import * as HTML from "./Components.js";
 
 const open = async (file) => {
@@ -28,7 +11,7 @@ const open = async (file) => {
     mode: "same-origin",
   });
 
-  return "done";
+  return res.text();
 }
 
 const search = async (query) => {
